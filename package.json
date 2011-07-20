@@ -1,0 +1,26 @@
+{ "name": "pop"
+, "description": "A static website and blog generator"
+, "version": "0.0.1"
+, "url": "http://popjs.com"
+, "author": "Alex R. Young <alex@helicoid.net>"
+, "engines": ["node >= 0.4.7"]
+, "main": "./lib/pop.js"
+, "bin": { "pop": "./bin/pop" }
+, "dependencies": {
+    "markdown-js": "latest"
+  , "yamlish": "0.0.1"
+  , "underscore.date": "0.5.x"
+  , "stextile": "latest"
+  , "nodewatch": "latest"
+  , "jade": ">= 0.13.0"
+  , "stylus": ">= 0.13.7"
+  }
+, "devDependencies": {
+    "dox": "latest"
+  , "expresso": "latest"
+  }
+, "repository": {
+    "type" : "git"
+  , "url" : "http://github.com/alexyoung/pop.git"
+  }
+}

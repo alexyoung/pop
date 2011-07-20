@@ -1,0 +1,42 @@
+h3. Features
+
+Pop is a static site builder for Node, optimised for blogs; based on "Jekyll":https://github.com/mojombo/jekyll.
+
+* Designed to be a workhorse for large production blogs
+* Useful built-in helpers: hNews post generation, pagination, tags
+* Extend using your own helpers and pre-filters
+
+h3. Influences
+
+"Jekyll":https://github.com/mojombo/jekyll was a huge influence, particularly because I've written hundreds of posts for that platform.
+
+I've also been researching other static site generators.
+
+* "jekyll":https://github.com/mojombo/jekyll
+* "mksite":https://github.com/cosmonaut/mksite
+* "hyde":http://hyde.github.com/
+
+h3. TO-DO
+
+* A simple site should be able to be generated without a config file using defaults
+* Useful/simple default site style to get people started
+* More post truncation helpers
+* Make it accept a command line param for a single file to generate, with an option to watch for changes (i.e., regenerate latest post + index.jade)
+* Make prettyprint css built in? alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
+* rss helper
+* nib (to make it easier to share styles?)
+* Mock filesystem for tests so I don't need to write to /tmp
+* Shared logging so I can turn it off during tests
+* Make template language configurable, default to jade
+
+h3. Documentation TO-DO
+
+* User filters: replace all text, useful for custom filtering
+* User helpers: passed to Jade, get `site` as `this`
+* Document use as modules
+* Config file
+* Built-in templates
+* Helpers
+* hNews
+* Jade/Stylus
+

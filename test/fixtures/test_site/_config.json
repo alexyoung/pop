@@ -1,0 +1,4 @@
+{ "permalink": "/:year/:month/:day/:title"
+, "paginate": 20
+, "exclude": ["run\\.js", "\\.swp"]
+}

@@ -1,0 +1,6 @@
+node_modules/
+_site
+.DS_Store
+tmp/*
+*.sw?
+lib-cov
