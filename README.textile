@@ -6,6 +6,14 @@ Pop is a static site builder for Node, optimised for blogs; based on "Jekyll":ht
 * Useful built-in helpers: hNews post generation, pagination, tags
 * Extend using your own helpers and pre-filters
 
+h3. Installation
+
+<pre>
+npm install -g pop
+</code>
+
+Global is preferred.  If you want to use <code>pop server</code>, you'll need to install Express too.
+
 h3. Influences
 
 "Jekyll":https://github.com/mojombo/jekyll was a huge influence, particularly because I've written hundreds of posts for that platform.
@@ -28,6 +36,7 @@ h3. TO-DO
 * Mock filesystem for tests so I don't need to write to /tmp
 * Shared logging so I can turn it off during tests
 * Make template language configurable, default to jade
+* If enough people get confused about manually installing Express, I'll make it a dependency for the optional dev server mode
 
 h3. Documentation TO-DO
 
