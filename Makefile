@@ -9,6 +9,6 @@ cov:
 	@./node_modules/.bin/expresso -I lib --cov $(TESTS)
 
 docs:
-	@./node_modules/dox/bin/dox -t "Pop" -d "Site generator" lib/*.js > doc/index.html
+	@./node_modules/dox/bin/dox -t "Pop" -i doc/intro.md lib/*.js > doc/index.html
 
 .PHONY: docs test cov

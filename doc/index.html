@@ -108,7 +108,9 @@ code .this { color: #19469D; }</style>
 		</script>
 	</head>
 	<body>
-<table id="source"><tbody><tr><td><h1>Pop</h1><p>Site generator</p></td><td></td></tr><tr class="filename"><td><h2 id="lib/cli_tools.js"><a href="#">cli_tools</a></h2></td><td>lib/cli_tools.js</td></tr><tr class="code">
+<table id="source"><tbody><tr><td><h1>Pop</h1><p>Pop is a static site and blog generator for Node.</p>
+
+<ul><li>GitHub: <a href="https://github.com/alexyoung/pop">alexyoung / pop</a></li><li>Issues: <a href="https://github.com/alexyoung/pop/issues">Pop issue tracker</a></li><li>License <em>MIT License</em></li></ul></td><td></td></tr><tr class="filename"><td><h2 id="lib/cli_tools.js"><a href="#">cli_tools</a></h2></td><td>lib/cli_tools.js</td></tr><tr class="code">
 <td class="docs">
 <p>Module dependencies.
  </p>
@@ -131,7 +133,7 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="variable">datePad</span>: <span class="keyword">function</span>(<span class="variable">num</span>) {
-    <span class="keyword">return</span> <span class="variable">num</span>.<span class="variable">toString</span>().<span class="variable">length</span> === <span class="number integer">1</span> ? <span class="string">'0'</span> + <span class="variable">dateStr</span> : <span class="variable">dateStr</span>;
+    <span class="keyword">return</span> <span class="variable">num</span>.<span class="variable">toString</span>().<span class="variable">length</span> === <span class="number integer">1</span> ? <span class="string">'0'</span> + <span class="variable">num</span> : <span class="variable">num</span>;
   },</code></pre>
 </td>
 </tr>
@@ -181,7 +183,7 @@ code .this { color: #19469D; }</style>
 
     <span class="variable">frontMatter</span> = <span class="string">'---\n'</span> + <span class="variable">yamlish</span>.<span class="variable">encode</span>(<span class="variable">meta</span>).<span class="variable">replace</span>(<span class="regexp">/^\s+/mg</span>, <span class="string">''</span>) + <span class="string">'\n---\n'</span>;
 
-    <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">fileName</span>, <span class="variable">frontMatter</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+    <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">config</span>.<span class="variable">root</span>, <span class="variable">fileName</span>), <span class="variable">frontMatter</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
       <span class="keyword">if</span> (<span class="variable">err</span>) {
         <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
         <span class="keyword">throw</span>(<span class="variable">err</span>);
@@ -268,25 +270,16 @@ code .this { color: #19469D; }</style>
       <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
     } <span class="keyword">else</span> {
       <span class="keyword">var</span> <span class="variable">paths</span> = [<span class="string">'_posts'</span>, <span class="string">'_lib'</span>, <span class="string">'_layouts'</span>, <span class="string">'_includes'</span>];
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Creating path:'</span>, <span class="variable">pathName</span>);
       <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">pathName</span>, <span class="number integer">0777</span>);
       <span class="variable">paths</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">p</span>) {
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Creating path:'</span>, <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">p</span>));
         <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">p</span>), <span class="number integer">0777</span>);
       });
 
-      <span class="comment">// Config</span>
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Writing file: '</span>, <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_config.json'</span>));
       <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_config.json'</span>), <span class="this">this</span>.<span class="variable">defaultConfig</span>());
-
-      <span class="comment">// Index page</span>
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Writing file: '</span>, <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'index.jade'</span>));
       <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'index.jade'</span>), <span class="this">this</span>.<span class="variable">defaultIndex</span>());
-      
-      <span class="comment">// Default layout</span>
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Writing file: '</span>, <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'default.jade'</span>));
       <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'default.jade'</span>), <span class="this">this</span>.<span class="variable">defaultLayout</span>());
 
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Site created:'</span>, <span class="variable">pathName</span>);
       <span class="variable">fn</span>();
     }
   }
@@ -331,12 +324,9 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>()
-  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
   , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
-  , <span class="variable">config</span> = <span class="variable">readConfigFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">root</span>, <span class="string">'_config.json'</span>));
 
-<span class="variable">config</span>.<span class="variable">root</span> = <span class="variable">root</span>;
-<span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">config</span>;
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">readConfigFile</span>;
 </code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/file_map.js"><a href="#">file_map</a></h2></td><td>lib/file_map.js</td></tr><tr class="code">
@@ -663,7 +653,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">template</span> += <span class="string">'          a.page(href=&quot;/page&quot; + i + &quot;/&quot;) #{i}\n'</span>;
     <span class="variable">template</span> += <span class="string">'        - else\n'</span>;
     <span class="variable">template</span> += <span class="string">'          a.page(href=&quot;/&quot;) 1\n'</span>;
-    <span class="variable">template</span> += <span class="string">'      - if (paginator.nextPage &lt; paginator.pages)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      - if (paginator.nextPage &lt;= paginator.pages)\n'</span>;
     <span class="variable">template</span> += <span class="string">'        a.next(href=&quot;/page&quot; + paginator.nextPage + &quot;/&quot;) Next\n'</span>;
     <span class="variable">template</span> += <span class="string">'        span &rarr;\n'</span>;
     <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: { <span class="variable">paginator</span>: <span class="variable">paginator</span> } });
@@ -848,8 +838,7 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="variable">truncateParagraphs</span>: <span class="keyword">function</span>(<span class="variable">text</span>, <span class="variable">length</span>, <span class="variable">moreText</span>) {
     <span class="keyword">var</span> <span class="variable">t</span> = <span class="variable">text</span>.<span class="variable">split</span>(<span class="string">'&lt;/p&gt;'</span>);
-    <span class="variable">length</span>++;
-    <span class="keyword">return</span> <span class="variable">t</span>.<span class="variable">length</span> &<span class="variable">lt</span>;= <span class="variable">length</span> ? <span class="variable">text</span> : <span class="variable">t</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">join</span>(<span class="string">'&lt;/p&gt;'</span>) + <span class="variable">moreText</span>;
+    <span class="keyword">return</span> <span class="variable">t</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">length</span> ? <span class="variable">text</span> : <span class="variable">t</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">join</span>(<span class="string">'&lt;/p&gt;'</span>) + <span class="string">'&lt;/p&gt;'</span> + <span class="variable">moreText</span>;
   }
 };
 
@@ -870,7 +859,7 @@ code .this { color: #19469D; }</style>
   <span class="this">this</span>.<span class="variable">perPage</span> = <span class="variable">perPage</span>;
   <span class="this">this</span>.<span class="variable">items</span> = <span class="this">this</span>.<span class="variable">allItems</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">perPage</span>);
   <span class="this">this</span>.<span class="variable">previousPage</span> = <span class="number integer">0</span>;
-  <span class="this">this</span>.<span class="variable">nextPage</span> = <span class="number integer">0</span>;
+  <span class="this">this</span>.<span class="variable">nextPage</span> = <span class="number integer">2</span>;
   <span class="this">this</span>.<span class="variable">page</span> = <span class="number integer">1</span>;
   <span class="this">this</span>.<span class="variable">pages</span> = <span class="class">Math</span>.<span class="variable">round</span>(<span class="this">this</span>.<span class="variable">allItems</span>.<span class="variable">length</span> / <span class="this">this</span>.<span class="variable">perPage</span>) + <span class="number integer">1</span>;
 }</code></pre>
@@ -915,7 +904,7 @@ code .this { color: #19469D; }</style>
   });
 };
 
-<span class="variable">exports</span>.<span class="class">Paginator</span> = <span class="class">Paginator</span>;
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">Paginator</span>;
 </code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/pop.js"><a href="#">pop</a></h2></td><td>lib/pop.js</td></tr><tr class="code">
@@ -924,17 +913,21 @@ code .this { color: #19469D; }</style>
  </p>
 </td>
 <td class="code">
-<pre><code><span class="keyword">var</span> <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/file_map'</span>)
+<pre><code><span class="keyword">var</span> <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/file_map'</span>)
   , <span class="class">SiteBuilder</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/site_builder'</span>)
   , <span class="variable">cliTools</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/cli_tools'</span>)
+  , <span class="variable">readConfig</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>)
   , <span class="variable">usage</span>
-  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>);
+  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>)
+  , <span class="variable">version</span> = <span class="string">'0.0.1'</span>;
 
 <span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
 <span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
 <span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
 <span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
 <span class="variable">usage</span> += <span class="string">'server                Create a server on port 4000 for _site/\n\n'</span>;
+<span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
 <span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;</code></pre>
 </td>
 </tr>
@@ -948,7 +941,10 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="keyword">function</span> <span class="variable">loadConfig</span>() {
-  <span class="keyword">return</span> <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>);
+  <span class="keyword">var</span> <span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>()
+    , <span class="variable">config</span> = <span class="variable">readConfig</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">root</span>, <span class="string">'_config.json'</span>));
+  <span class="variable">config</span>.<span class="variable">root</span> = <span class="variable">root</span>;
+  <span class="keyword">return</span> <span class="variable">config</span>;
 }</code></pre>
 </td>
 </tr>
@@ -1009,6 +1005,11 @@ code .this { color: #19469D; }</style>
       <span class="keyword">case</span> <span class="string">'new'</span>:
         <span class="variable">cliTools</span>.<span class="variable">makeSite</span>(<span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
       <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'-v'</span>:
+      <span class="keyword">case</span> <span class="string">'--version'</span>:
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'pop version:'</span>, <span class="variable">version</span>);
+        <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>);
+      <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'-h'</span>:
       <span class="keyword">case</span> <span class="string">'--help'</span>:
         <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">usage</span>);
@@ -1022,6 +1023,7 @@ code .this { color: #19469D; }</style>
 <span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">SiteBuilder</span> = <span class="class">SiteBuilder</span>;
 <span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">FileMap</span> = <span class="class">FileMap</span>;
 <span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">generateSite</span> = <span class="variable">generateSite</span>;
+<span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">cliTools</span> = <span class="variable">cliTools</span>;
 </code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/server.js"><a href="#">server</a></h2></td><td>lib/server.js</td></tr><tr class="code">
@@ -1110,7 +1112,7 @@ code .this { color: #19469D; }</style>
   , <span class="variable">stylus</span> = <span class="variable">require</span>(<span class="string">'stylus'</span>)
   , <span class="variable">yamlish</span> = <span class="variable">require</span>(<span class="string">'yamlish'</span>)
   , <span class="variable">markdown</span> = <span class="variable">require</span>(<span class="string">'markdown-js'</span>)
-  , <span class="class">Paginator</span> = <span class="variable">require</span>(<span class="string">'./paginator'</span>).<span class="class">Paginator</span>
+  , <span class="class">Paginator</span> = <span class="variable">require</span>(<span class="string">'./paginator'</span>)
   , <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="string">'./file_map.js'</span>).<span class="class">FileMap</span>
   , <span class="class">EventEmitter</span> = <span class="variable">require</span>(<span class="string">'events'</span>).<span class="class">EventEmitter</span>
   , <span class="variable">filters</span> = <span class="variable">require</span>(<span class="string">'./filters'</span>)
@@ -1143,7 +1145,7 @@ code .this { color: #19469D; }</style>
   }
 
   <span class="comment">// TODO Make this configurable</span>
-  <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_site'</span>);
+  <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">config</span>.<span class="variable">output</span> || <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_site'</span>);
   <span class="this">this</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
   <span class="this">this</span>.<span class="variable">posts</span> = [];
   <span class="this">this</span>.<span class="variable">helpers</span> = <span class="variable">helpers</span>;
