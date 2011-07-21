@@ -77,3 +77,9 @@ exports['test truncateParagraphs'] = function() {
   assert.equal(t, '<p>A</p><p>A</p>MORE!');
 };
 
+exports['test paginatedPosts'] = function() {
+  siteBuilder.paginator = new Paginator(config.perPage, siteBuilder.posts)
+  var html = helpers.paginatedPosts.apply(siteBuilder, []);
+  assert.match(html, /<article/);
+};
+
