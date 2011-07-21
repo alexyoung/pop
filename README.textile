@@ -26,6 +26,7 @@ I've also been researching other static site generators.
 
 h3. TO-DO
 
+* Add styles for pagination to the default site and check it looks good
 * A simple site should be able to be generated without a config file using defaults
 * Useful/simple default site style to get people started
 * More post truncation helpers
