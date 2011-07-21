@@ -1,0 +1,1925 @@
+<html>
+	<head>
+		<title>Pop</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<style>body {
+    margin: 0;
+    padding: 0;
+    font: 14px/1.5 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    color: #252519;
+}
+a {
+    color: #252519;
+}
+a:hover {
+    text-decoration: underline;
+    color: #19469D;
+}
+p {
+    margin: 12px 0;
+}
+h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+}
+table#source {
+    width: 100%;
+    border-collapse: collapse;
+}
+table#source td:first-child {
+    padding: 30px 40px 30px 40px;
+    vertical-align: top;
+}
+table#source td:first-child,
+table#source td:first-child pre {
+    width: 450px;
+}
+table#source td:last-child {
+    padding: 30px 0 30px 40px;
+    border-left: 1px solid #E5E5EE;
+    background: #F5F5FF;
+}
+table#source tr {
+    border-bottom: 1px solid #E5E5EE;
+}
+table#source tr.filename {
+    padding-top: 40px;
+    border-top: 1px solid #E5E5EE;
+}
+table#source tr.filename td:first-child {
+    text-transform: capitalize;
+}
+table#source tr.filename td:last-child {
+    font-size: 12px;
+}
+table#source tr.filename h2 {
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+table#source tr.code h1,
+table#source tr.code h2,
+table#source tr.code h3 {
+    margin-top: 30px;
+    font-family: "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
+    font-size: 18px;
+}
+table#source tr.code h2 {
+    font-size: 16px;
+}
+table#source tr.code h3 {
+    font-size: 14px;
+}
+table#source tr.code ul {
+    margin: 15px 0 15px 35px;
+    padding: 0;
+}
+table#source tr.code ul li {
+    margin: 0;
+    padding: 1px 0;
+}
+table#source tr.code ul li p {
+    margin: 0;
+    padding: 0;
+}
+table#source tr.code td:first-child pre {
+    padding: 20px;
+}
+#ribbon {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+code .string { color: #219161; }
+code .regexp { color: #219161; }
+code .keyword { color: #954121; }
+code .number { color: #19469D; }
+code .comment { color: #bbb; }
+code .this { color: #19469D; }</style>
+		<script>
+			$(function(){
+				$('tr.code').hide();
+				$('tr.filename').toggle(function(){
+					$(this).nextUntil('.filename').fadeIn();
+				}, function(){
+					$(this).nextUntil('.filename').fadeOut();
+				});
+			});
+		</script>
+	</head>
+	<body>
+<table id="source"><tbody><tr><td><h1>Pop</h1><p>Pop is a static site and blog generator for Node.</p>
+
+<ul><li>GitHub: <a href="https://github.com/alexyoung/pop">alexyoung / pop</a></li><li>Issues: <a href="https://github.com/alexyoung/pop/issues">Pop issue tracker</a></li><li>License <em>MIT License</em></li></ul></td><td></td></tr><tr class="filename"><td><h2 id="lib/cli_tools.js"><a href="#">cli_tools</a></h2></td><td>lib/cli_tools.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">yamlish</span> = <span class="variable">require</span>(<span class="string">'yamlish'</span>)
+  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>);
+
+<span class="variable">module</span>.<span class="variable">exports</span> = {</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Adds zero padding to single digit numbers.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Integer</em>  A number to pad</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">datePad</span>: <span class="keyword">function</span>(<span class="variable">num</span>) {
+    <span class="keyword">return</span> <span class="variable">num</span>.<span class="variable">toString</span>().<span class="variable">length</span> === <span class="number integer">1</span> ? <span class="string">'0'</span> + <span class="variable">num</span> : <span class="variable">num</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Makes a post file name (not URL) based on the config's permanlink format.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Permalink format</p></li><li><p><strong>param</strong>: <em>Date</em>  Date for the file name</p></li><li><p><strong>param</strong>: <em>String</em>  The title for the post</p></li><li><p><strong>param</strong>: <em>String</em>  The file format (md or textile)</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">getPostFileName</span>: <span class="keyword">function</span>(<span class="variable">pf</span>, <span class="variable">date</span>, <span class="variable">title</span>, <span class="variable">format</span>) {
+    <span class="comment">// TODO: Remove non-ASCII?</span>
+    <span class="variable">title</span> = <span class="variable">title</span>.<span class="variable">toLowerCase</span>().<span class="variable">replace</span>(<span class="regexp">/\s+/g</span>, <span class="string">'-'</span>);
+    <span class="keyword">return</span> <span class="string">'_posts/'</span> + <span class="variable">pf</span>.<span class="variable">replace</span>(<span class="string">':year'</span>, <span class="variable">date</span>.<span class="variable">getFullYear</span>())
+             .<span class="variable">replace</span>(<span class="string">':month'</span>, <span class="this">this</span>.<span class="variable">datePad</span>(<span class="variable">date</span>.<span class="variable">getMonth</span>() + <span class="number integer">1</span>))
+             .<span class="variable">replace</span>(<span class="string">':day'</span>, <span class="this">this</span>.<span class="variable">datePad</span>(<span class="variable">date</span>.<span class="variable">getDate</span>()))
+             .<span class="variable">replace</span>(<span class="regexp">/^\/</span>/, <span class="string">''</span>)
+             .<span class="variable">replace</span>(<span class="regexp">/\/</span>/<span class="variable">g</span>, <span class="string">'-'</span>)
+             .<span class="variable">replace</span>(<span class="string">':title'</span>, <span class="variable">title</span> + <span class="string">'.'</span> + <span class="variable">format</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Generates a stubbed post and writes it based on a file name.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Config</em>  A config object</p></li><li><p><strong>param</strong>: <em>String</em>  Site title</p></li><li><p><strong>param</strong>: <em>Function</em>  callback</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">makePost</span>: <span class="keyword">function</span>(<span class="variable">config</span>, <span class="variable">title</span>, <span class="variable">fn</span>) {
+    <span class="comment">// TODO: Get at least format and author from CLI</span>
+    <span class="keyword">var</span> <span class="variable">meta</span> = {
+          <span class="variable">layout</span>: <span class="string">'post'</span>
+        , <span class="variable">title</span>: <span class="variable">title</span>
+        , <span class="variable">author</span>: <span class="string">''</span>
+        , <span class="variable">tags</span>: [<span class="string">'tag_1'</span>, <span class="string">'tag_2'</span>]
+        }
+      , <span class="variable">url</span> = <span class="string">''</span>
+      , <span class="variable">format</span> = <span class="string">'md'</span>
+      , <span class="variable">date</span> = <span class="keyword">new</span> <span class="class">Date</span>()
+      , <span class="variable">frontMatter</span> = <span class="string">''</span>
+      , <span class="variable">fileName</span> = <span class="this">this</span>.<span class="variable">getPostFileName</span>(<span class="variable">config</span>.<span class="variable">permalink</span>, <span class="variable">date</span>, <span class="variable">title</span>, <span class="variable">format</span>);
+
+    <span class="variable">frontMatter</span> = <span class="string">'---\n'</span> + <span class="variable">yamlish</span>.<span class="variable">encode</span>(<span class="variable">meta</span>).<span class="variable">replace</span>(<span class="regexp">/^\s+/mg</span>, <span class="string">''</span>) + <span class="string">'\n---\n'</span>;
+
+    <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">config</span>.<span class="variable">root</span>, <span class="variable">fileName</span>), <span class="variable">frontMatter</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+      <span class="keyword">if</span> (<span class="variable">err</span>) {
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+        <span class="keyword">throw</span>(<span class="variable">err</span>);
+      }
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Post created:'</span>, <span class="variable">fileName</span>);
+      <span class="variable">fn</span>();
+    });
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Default config settings, used by site generator.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">defaultConfig</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="string">''</span> 
+    + <span class="string">'{  &quot;url&quot;: &quot;http://example.com/&quot;\n'</span>
+    + <span class="string">' , &quot;title&quot;: &quot;Example&quot;\n'</span>
+    + <span class="string">' , &quot;permalink&quot;: &quot;/:year/:month/:day/:title&quot;\n'</span>
+    + <span class="string">' , &quot;paginate&quot;: 10\n'</span>
+    + <span class="string">' , &quot;exclude&quot;: [&quot;\\\\.swp&quot;]\n'</span>
+    + <span class="string">' , &quot;autoGenerate&quot;: [{&quot;feed&quot;: &quot;feed.xml&quot;}] }\n'</span>
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Default index file, used by site generator.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">defaultIndex</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="string">''</span>
+    + <span class="string">'---\n'</span>
+    + <span class="string">'layout: default\n'</span>
+    + <span class="string">'title: My Site\n'</span>
+    + <span class="string">'paginate: true\n'</span>
+    + <span class="string">'---\n\n'</span>
+    + <span class="string">'!{paginatedPosts()}\n'</span>
+    + <span class="string">'!{paginate}\n'</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Default layout, used by site generator.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">defaultLayout</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="string">''</span>
+    + <span class="string">'!!! 5\n'</span>
+    + <span class="string">'html(lang=&quot;en&quot;)\n'</span>
+    + <span class="string">'  head\n'</span>
+    + <span class="string">'    title #{site.config.title}\n'</span>
+    + <span class="string">'    link(href=&quot;/stylesheets/screen.css&quot;, media=&quot;screen&quot;, rel=&quot;stylesheet&quot;, type=&quot;text/css&quot;)\n'</span>
+    + <span class="string">'  body\n'</span>
+    + <span class="string">'    header#header\n'</span>
+    + <span class="string">'      hgroup\n'</span>
+    + <span class="string">'        h1 #{site.config.title}\n'</span>
+    + <span class="string">'        h2 I promise to write regularly!\n'</span>
+    + <span class="string">'    !{content}\n'</span>
+    + <span class="string">'    footer\n'</span>
+    + <span class="string">'      nav\n'</span>
+    + <span class="string">'        h1 Related Sites\n'</span>
+    + <span class="string">'        ul\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://popjs.com&quot;) Powered by Pop\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://dailyjs.com&quot;) Learn JavaScript\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://alexyoung.org&quot;) Designed by Alex R. Young\n'</span>
+    + <span class="string">'      p.copyright Content &copy; The Authors\n'</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Default post layout, used by site generator.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">defaultPostLayout</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="string">''</span>
+    + <span class="string">'!!! 5\n'</span>
+    + <span class="string">'html(lang=&quot;en&quot;)\n'</span>
+    + <span class="string">'  head\n'</span>
+    + <span class="string">'    title #{post.title}\n'</span>
+    + <span class="string">'    link(href=&quot;/stylesheets/screen.css&quot;, media=&quot;screen&quot;, rel=&quot;stylesheet&quot;, type=&quot;text/css&quot;)\n'</span>
+    + <span class="string">'  body\n'</span>
+    + <span class="string">'    header#header\n'</span>
+    + <span class="string">'      hgroup\n'</span>
+    + <span class="string">'        h1 #{site.config.title}\n'</span>
+    + <span class="string">'        h2 I promise to write regularly!\n'</span>
+    + <span class="string">'    !{hNews(post)}\n'</span>
+    + <span class="string">'    footer\n'</span>
+    + <span class="string">'      nav\n'</span>
+    + <span class="string">'        h1 Related Sites\n'</span>
+    + <span class="string">'        ul\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://popjs.com&quot;) Powered by Pop\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://dailyjs.com&quot;) Learn JavaScript\n'</span>
+    + <span class="string">'          li\n'</span>
+    + <span class="string">'            a(href=&quot;http://alexyoung.org&quot;) Designed by Alex R. Young\n'</span>
+    + <span class="string">'      p.copyright Content &copy; The Authors\n'</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Sample post, to get people started.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">samplePost</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="string">''</span>
+    + <span class="string">'---\n'</span>
+    + <span class="string">'title: Example Post About Something\n'</span>
+    + <span class="string">'author: Pop\n'</span>
+    + <span class="string">'layout: post\n'</span>
+    + <span class="string">'tags:\n'</span>
+    + <span class="string">'- tag1\n'</span>
+    + <span class="string">'- tag2\n'</span>
+    + <span class="string">'---\n'</span>
+    + <span class="string">'Pop is a static site generator.  It can be used to make blogs.  I hope you enjoy it!\n'</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Sample post, to get people started.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">defaultStylus</span>: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">__dirname</span> + <span class="string">'/assets/screen.styl'</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Site generator.  Will not create a site if <code>pathName</code> exists.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Site path name</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback to run when finished</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">makeSite</span>: <span class="keyword">function</span>(<span class="variable">pathName</span>, <span class="variable">fn</span>) {
+    <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">pathName</span>)) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error: Path already exists'</span>);
+      <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
+    } <span class="keyword">else</span> {
+      <span class="keyword">var</span> <span class="variable">paths</span> = [<span class="string">'_posts'</span>, <span class="string">'_lib'</span>, <span class="string">'_layouts'</span>, <span class="string">'_includes'</span>, <span class="string">'stylesheets'</span>]
+        , <span class="variable">postFileName</span> = <span class="this">this</span>.<span class="variable">getPostFileName</span>(<span class="string">'/:year/:month/:day/:title'</span>, <span class="keyword">new</span> <span class="class">Date</span>(), <span class="string">'Example Post About Something'</span>, <span class="string">'md'</span>);
+
+      <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">pathName</span>, <span class="number integer">0777</span>);
+      <span class="variable">paths</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">p</span>) {
+        <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">p</span>), <span class="number integer">0777</span>);
+      });
+
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_config.json'</span>), <span class="this">this</span>.<span class="variable">defaultConfig</span>());
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'index.jade'</span>), <span class="this">this</span>.<span class="variable">defaultIndex</span>());
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'default.jade'</span>), <span class="this">this</span>.<span class="variable">defaultLayout</span>());
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'post.jade'</span>), <span class="this">this</span>.<span class="variable">defaultPostLayout</span>());
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'stylesheets'</span>, <span class="string">'screen.styl'</span>), <span class="this">this</span>.<span class="variable">defaultStylus</span>());
+      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">postFileName</span>), <span class="this">this</span>.<span class="variable">samplePost</span>());
+
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Site created:'</span>, <span class="variable">pathName</span>);
+      <span class="variable">fn</span>();
+    }
+  }
+};
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/config.js"><a href="#">config</a></h2></td><td>lib/config.js</td></tr><tr class="code">
+<td class="docs">
+<p>Config file reader.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Config file name</p></li><li><p><strong>return</strong>: <em>Object</em>  Parsed JavaScript object</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">readConfigFile</span>(<span class="variable">file</span>) {
+  <span class="keyword">var</span> <span class="variable">defaults</span> = {
+    <span class="variable">perPage</span>: <span class="number integer">20</span> 
+  };
+
+  <span class="keyword">function</span> <span class="variable">applyDefaults</span>(<span class="variable">config</span>) {
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="variable">defaults</span>) {
+      <span class="variable">config</span>[<span class="variable">key</span>] = <span class="variable">config</span>[<span class="variable">key</span>] || <span class="variable">defaults</span>[<span class="variable">key</span>];
+    }
+    <span class="keyword">return</span> <span class="variable">config</span>;
+  }
+
+  <span class="keyword">try</span> {
+    <span class="keyword">var</span> <span class="variable">data</span> = <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">file</span>).<span class="variable">toString</span>();
+    <span class="keyword">return</span> <span class="variable">applyDefaults</span>(<span class="class">JSON</span>.<span class="variable">parse</span>(<span class="variable">data</span>));
+  } <span class="keyword">catch</span>(<span class="variable">exception</span>) {
+    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading config:'</span>, <span class="variable">exception</span>.<span class="variable">message</span>);
+    <span class="keyword">throw</span>(<span class="variable">exception</span>);
+  }
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Module dependencies and additional config variables.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>()
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">readConfigFile</span>;
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/file_map.js"><a href="#">file_map</a></h2></td><td>lib/file_map.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
+  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="class">EventEmitter</span> = <span class="variable">require</span>(<span class="string">'events'</span>).<span class="class">EventEmitter</span>;</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Initialize <code>FileMap</code> with a config object.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  options</p></li><li><p><strong>api</strong>: <em>public</em></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="class">FileMap</span>(<span class="variable">config</span>) {
+  <span class="this">this</span>.<span class="variable">config</span> = <span class="variable">config</span> || {};
+  <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">exclude</span> = <span class="variable">config</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">config</span>.<span class="variable">exclude</span> ? <span class="variable">config</span>.<span class="variable">exclude</span> : [];
+  <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">exclude</span>.<span class="variable">push</span>(<span class="string">'/_site'</span>);
+  <span class="this">this</span>.<span class="variable">ignoreDotFiles</span> = <span class="variable">true</span>;
+  <span class="this">this</span>.<span class="variable">root</span> = <span class="variable">config</span>.<span class="variable">root</span>;
+  <span class="this">this</span>.<span class="variable">files</span> = [];
+  <span class="this">this</span>.<span class="variable">events</span> = <span class="keyword">new</span> <span class="class">EventEmitter</span>();
+  <span class="this">this</span>.<span class="variable">filesLeft</span> = <span class="number integer">0</span>;
+  <span class="this">this</span>.<span class="variable">dirsLeft</span> = <span class="number integer">1</span>;
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Determines file type based on file extension.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name</p></li><li><p><strong>return</strong>: <em>String</em>  Internal file type used by <code>SiteBuilder</code></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">fileType</span> = <span class="keyword">function</span>(<span class="variable">fileName</span>) {
+  <span class="keyword">var</span> <span class="variable">extension</span> = <span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">fileName</span>).<span class="variable">substring</span>(<span class="number integer">1</span>);
+
+  <span class="keyword">if</span> (<span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/\/</span><span class="variable">_posts</span>\<span class="comment">//)) {</span>
+    <span class="keyword">return</span> <span class="string">'post '</span> + <span class="variable">extension</span>;
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/\/</span><span class="variable">_layouts</span>\<span class="comment">//)) {</span>
+    <span class="keyword">return</span> <span class="string">'layout '</span> + <span class="variable">extension</span>;
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/\/</span><span class="variable">_includes</span>\<span class="comment">//)) {</span>
+    <span class="keyword">return</span> <span class="string">'include '</span> + <span class="variable">extension</span>;
+  } <span class="keyword">else</span> <span class="keyword">if</span> ([<span class="string">'jade'</span>, <span class="string">'ejs'</span>, <span class="string">'styl'</span>].<span class="variable">indexOf</span>(<span class="variable">extension</span>) !== -<span class="number integer">1</span>) {
+    <span class="keyword">return</span> <span class="string">'file '</span> + <span class="variable">extension</span>;
+  } <span class="keyword">else</span> {
+    <span class="keyword">return</span> <span class="string">'file'</span>;
+  }
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Recursively iterates from an initial path.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Start path name</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">walk</span> = <span class="keyword">function</span>(<span class="variable">dir</span>) {
+  <span class="keyword">if</span> (!<span class="variable">dir</span>) <span class="variable">dir</span> = <span class="this">this</span>.<span class="variable">root</span>;
+
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="variable">fs</span>.<span class="variable">readdir</span>(<span class="variable">dir</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">files</span>) {
+    <span class="variable">self</span>.<span class="variable">dirsLeft</span>--;
+    <span class="keyword">if</span> (!<span class="variable">files</span>) <span class="keyword">return</span>;
+    <span class="variable">files</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+      <span class="variable">file</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">dir</span>, <span class="variable">file</span>);
+      <span class="variable">self</span>.<span class="variable">filesLeft</span>++;
+      <span class="variable">fs</span>.<span class="variable">stat</span>(<span class="variable">file</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">stats</span>) {
+        <span class="keyword">if</span> (<span class="variable">err</span>) <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error:'</span>, <span class="variable">err</span>);
+        <span class="keyword">if</span> (!<span class="variable">stats</span>) <span class="keyword">return</span>;
+        <span class="keyword">if</span> (<span class="variable">stats</span>.<span class="variable">isDirectory</span>(<span class="variable">file</span>)) {
+          <span class="variable">self</span>.<span class="variable">filesLeft</span>--;
+          <span class="variable">self</span>.<span class="variable">dirsLeft</span>++;
+          <span class="variable">self</span>.<span class="variable">walk</span>(<span class="variable">file</span>);
+          <span class="variable">self</span>.<span class="variable">addFile</span>(<span class="variable">file</span>, <span class="string">'dir'</span>);
+        } <span class="keyword">else</span> {
+          <span class="variable">self</span>.<span class="variable">filesLeft</span>--;
+          <span class="variable">self</span>.<span class="variable">addFile</span>(<span class="variable">file</span>, <span class="variable">self</span>.<span class="variable">fileType</span>(<span class="variable">file</span>));
+          <span class="keyword">if</span> (<span class="variable">self</span>.<span class="variable">filesLeft</span> === <span class="number integer">0</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">self</span>.<span class="variable">dirsLeft</span> === <span class="number integer">0</span>) {
+            <span class="variable">process</span>.<span class="variable">nextTick</span>(<span class="keyword">function</span>() {
+              <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'ready'</span>);
+            });
+          }
+        }
+      });
+    });
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Checks to see if a file name matches the excluded patterns.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name</p></li><li><p><strong>return</strong>: <em>Boolean</em>  Should the file be excluded? </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">isExcludedFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>) {
+  <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">ignoreDotFiles</span>)
+    <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">match</span>(<span class="regexp">/\/</span>\./)) <span class="keyword">return</span> <span class="variable">true</span>;
+
+  <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">exclude</span>.<span class="variable">some</span>(<span class="keyword">function</span>(<span class="variable">pattern</span>) {
+    <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">match</span>(<span class="variable">pattern</span>);
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Determines file type based on file extension.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name</p></li><li><p><strong>param</strong>: <em>String</em>  File type</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">addFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">type</span>) {
+  <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">isExcludedFile</span>(<span class="variable">file</span>)) <span class="keyword">return</span>;
+
+  <span class="this">this</span>.<span class="variable">files</span>.<span class="variable">push</span>({
+    <span class="variable">name</span>: <span class="variable">file</span>,
+    <span class="variable">type</span>: <span class="variable">type</span>,
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Bind an event to the internal <code>EventEmitter</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Event name</p></li><li><p><strong>param</strong>: <em>Function</em>  Handler</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">on</span> = <span class="keyword">function</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>) {
+  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>);
+};
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">FileMap</span>;
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/filters.js"><a href="#">filters</a></h2></td><td>lib/filters.js</td></tr><tr class="code">
+<td class="docs">
+<p>module.exports = {</p>
+</td>
+<td class="code">
+<pre><code>*
+   * <span class="class">Replaces</span> <span class="variable">liquid</span> <span class="variable">tag</span> <span class="variable">highlight</span> <span class="variable">directives</span> <span class="keyword">with</span> <span class="variable">prettyprint</span> <span class="class">HTML</span> <span class="variable">tags</span>.
+   *
+   * @<span class="variable">param</span> {<span class="class">String</span>} <span class="class">The</span> <span class="variable">text</span> <span class="keyword">for</span> <span class="variable">a</span> <span class="variable">post</span>
+   * @<span class="keyword">return</span> {<span class="class">String</span>}
+   </code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>highlight: function(data) {
+    data = data.replace(/{% highlight ([^ ]*) %}/g, '&lt;pre class="prettyprint lang-$1"&gt;');
+    data = data.replace(/{% endhighlight %}/g, '&lt;/pre&gt;');
+    return data;
+  }
+};</p>
+</td>
+<td class="code">
+
+</td>
+</tr><tr class="filename"><td><h2 id="lib/graceful.js"><a href="#">graceful</a></h2></td><td>lib/graceful.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>)
+  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">defaultTimeout</span> = <span class="number integer">0</span>
+  , <span class="variable">timeout</span> = <span class="variable">defaultTimeout</span>;</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Offers functionality similar to <code>mkdir -p</code>, but is async.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Path name</p></li><li><p><strong>param</strong>: <em>Number</em>  File creation mode</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback</p></li><li><p><strong>param</strong>: <em>Integer</em>  Path depth counter</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">mkdir_p</span>(<span class="variable">dir</span>, <span class="variable">mode</span>, <span class="variable">callback</span>, <span class="variable">position</span>) {
+  <span class="variable">mode</span> = <span class="variable">mode</span> || <span class="variable">process</span>.<span class="variable">umask</span>();
+  <span class="variable">position</span> = <span class="variable">position</span> || <span class="number integer">0</span>;
+  <span class="variable">parts</span> = <span class="variable">path</span>.<span class="variable">normalize</span>(<span class="variable">dir</span>).<span class="variable">split</span>(<span class="string">'/'</span>);
+
+  <span class="keyword">if</span> (<span class="variable">position</span> &<span class="variable">gt</span>;= <span class="variable">parts</span>.<span class="variable">length</span>) {
+    <span class="keyword">if</span> (<span class="variable">callback</span>) {
+      <span class="keyword">return</span> <span class="variable">callback</span>();
+    } <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="variable">true</span>;
+    }
+  }
+
+  <span class="keyword">var</span> <span class="variable">directory</span> = <span class="variable">parts</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">position</span> + <span class="number integer">1</span>).<span class="variable">join</span>(<span class="string">'/'</span>) || <span class="string">'/'</span>;
+  <span class="variable">fs</span>.<span class="variable">stat</span>(<span class="variable">directory</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {    
+    <span class="keyword">if</span> (<span class="variable">err</span> === <span class="keyword">null</span>) {
+      <span class="variable">mkdir_p</span>(<span class="variable">dir</span>, <span class="variable">mode</span>, <span class="variable">callback</span>, <span class="variable">position</span> + <span class="number integer">1</span>);
+    } <span class="keyword">else</span> {
+      <span class="variable">fs</span>.<span class="variable">mkdir</span>(<span class="variable">directory</span>, <span class="variable">mode</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+        <span class="keyword">if</span> (<span class="variable">err</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">err</span>.<span class="variable">errno</span> != <span class="number integer">17</span>) {
+          <span class="keyword">if</span> (<span class="variable">callback</span>) {
+            <span class="keyword">return</span> <span class="variable">callback</span>(<span class="variable">err</span>);
+          } <span class="keyword">else</span> {
+            <span class="keyword">throw</span> <span class="variable">err</span>;
+          }
+        } <span class="keyword">else</span> {
+          <span class="variable">mkdir_p</span>(<span class="variable">dir</span>, <span class="variable">mode</span>, <span class="variable">callback</span>, <span class="variable">position</span> + <span class="number integer">1</span>);
+        }
+      });
+    }
+  });
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Polymorphic approach to <code>fs.mkdir()</code></p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Path name</p></li><li><p><strong>param</strong>: <em>Number</em>  File creation mode</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">fs</span>.<span class="variable">mkdir_p</span> = <span class="keyword">function</span>(<span class="variable">dir</span>, <span class="variable">mode</span>, <span class="variable">callback</span>) {
+  <span class="variable">mkdir_p</span>(<span class="variable">dir</span>, <span class="variable">mode</span>, <span class="variable">callback</span> || <span class="variable">process</span>.<span class="variable">noop</span>);
+}
+
+<span class="comment">// Graceful patching wraps async fs methods</span>
+<span class="class">Object</span>.<span class="variable">keys</span>(<span class="variable">fs</span>)
+  .<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">i</span>) {
+    <span class="variable">exports</span>[<span class="variable">i</span>] = (<span class="keyword">typeof</span> <span class="variable">fs</span>[<span class="variable">i</span>] !== <span class="string">'function'</span>) ? <span class="variable">fs</span>[<span class="variable">i</span>]
+               : (<span class="variable">i</span>.<span class="variable">match</span>(<span class="regexp">/^[A-Z]|^create|Sync$/</span>)) ? <span class="keyword">function</span>() {
+                   <span class="keyword">return</span> <span class="variable">fs</span>[<span class="variable">i</span>].<span class="variable">apply</span>(<span class="variable">fs</span>, <span class="variable">arguments</span>);
+                 }
+               : <span class="variable">graceful</span>(<span class="variable">fs</span>[<span class="variable">i</span>]);
+  });
+
+<span class="keyword">function</span> <span class="variable">graceful</span>(<span class="variable">fn</span>) { <span class="keyword">return</span> <span class="keyword">function</span> <span class="class">GRACEFUL</span>() {
+  <span class="keyword">var</span> <span class="variable">args</span> = <span class="class">Array</span>.<span class="variable">prototype</span>.<span class="variable">slice</span>.<span class="variable">call</span>(<span class="variable">arguments</span>)
+    , <span class="variable">cb_</span> = <span class="variable">args</span>.<span class="variable">pop</span>();
+  
+  <span class="variable">args</span>.<span class="variable">push</span>(<span class="variable">cb</span>);
+
+  <span class="keyword">function</span> <span class="variable">cb</span>(<span class="variable">er</span>) {
+    <span class="keyword">if</span> (<span class="variable">er</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">er</span>.<span class="variable">message</span>.<span class="variable">match</span>(<span class="regexp">/^EMFILE, Too many open files/</span>)) {
+      <span class="variable">setTimeout</span>(<span class="keyword">function</span>() {
+        <span class="class">GRACEFUL</span>.<span class="variable">apply</span>(<span class="variable">fs</span>, <span class="variable">args</span>)
+      }, <span class="variable">timeout</span>++);
+      <span class="keyword">return</span>;
+    }
+    <span class="variable">timeout</span> = <span class="variable">defaultTimeout</span>;
+    <span class="variable">cb_</span>.<span class="variable">apply</span>(<span class="keyword">null</span>, <span class="variable">arguments</span>);
+  }
+  <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">fs</span>, <span class="variable">args</span>)
+}};
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/helpers.js"><a href="#">helpers</a></h2></td><td>lib/helpers.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies and local variables.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">jade</span> = <span class="variable">require</span>(<span class="string">'jade'</span>)
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>)
+  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">cache</span> = {}
+  , <span class="variable">_date</span> = <span class="variable">require</span>(<span class="string">'underscore.date'</span>)
+  , <span class="variable">helpers</span>;
+
+<span class="variable">helpers</span> = {</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Pagination links.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  Paginator object</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">paginate</span>: <span class="keyword">function</span>(<span class="variable">paginator</span>) {
+    <span class="keyword">var</span> <span class="variable">template</span> = <span class="string">''</span>;
+    <span class="variable">template</span> += <span class="string">'.pages\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  - if (paginator.previousPage)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    span.prev_next\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      - if (paginator.previousPage === 1)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        span &larr;\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        a.previous(href=&quot;/&quot;) Previous\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      - else\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        span &larr;\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        a.previous(href=&quot;/page&quot; + paginator.previousPage + &quot;/&quot;) Previous\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  - if (paginator.pages &gt; 1)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    span.prev_next\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      - for (var i = 1; i &lt;= paginator.pages; i++)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        - if (i === paginator.page)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'          strong.page #{i}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        - else if (i !== 1)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'          a.page(href=&quot;/page&quot; + i + &quot;/&quot;) #{i}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        - else\n'</span>;
+    <span class="variable">template</span> += <span class="string">'          a.page(href=&quot;/&quot;) 1\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      - if (paginator.nextPage &lt;= paginator.pages)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        a.next(href=&quot;/page&quot; + paginator.nextPage + &quot;/&quot;) Next\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        span &rarr;\n'</span>;
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: { <span class="variable">paginator</span>: <span class="variable">paginator</span> } });
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Generates paginated blog posts, suitable for use on an index page.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">paginatedPosts</span>: <span class="keyword">function</span>() {
+    <span class="keyword">var</span> <span class="variable">template</span>
+      , <span class="variable">site</span> = <span class="this">this</span>;
+
+    <span class="variable">template</span> = <span class="string">''</span>
+      + <span class="string">'- for (var i = 0; i &lt; paginator.items.length; i++)\n'</span>
+      + <span class="string">'  !{hNews(paginator.items[i], true)}\n'</span>;
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span> }) });
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Atom Jade template.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Site URL</p></li><li><p><strong>param</strong>: <em>String</em>  Site title</p></li><li><p><strong>param</strong>: <em>String</em>  Feed URL</p></li><li><p><strong>param</strong>: <em>Integer</em>  Posts per page</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">atom</span>: <span class="keyword">function</span>(<span class="variable">url</span>, <span class="variable">title</span>, <span class="variable">feed</span>, <span class="variable">perPage</span>) {
+    <span class="variable">perPage</span> = <span class="variable">perPage</span> || <span class="number integer">20</span>;
+    <span class="keyword">var</span> <span class="variable">template</span> = <span class="string">''</span>
+      , <span class="variable">site</span> = <span class="this">this</span>;
+
+    <span class="variable">perPage</span> = <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">perPage</span> ? <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> : <span class="variable">perPage</span>;
+
+    <span class="variable">template</span> += <span class="string">'!!!xml\n'</span>;
+    <span class="variable">template</span> += <span class="string">'feed(xmlns=&quot;http://www.w3.org/2005/Atom&quot;)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  title #{title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  link(href=feed, rel=&quot;self&quot;)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  link(href=url)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  updated #{dx(site.posts[0].date)}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  id #{url}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  author\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    name #{title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  - for (var i = 0, post = site.posts[i]; i &lt; '</span> + <span class="variable">perPage</span> + <span class="string">'; i++, post = site.posts[i])\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    entry\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      title #{post.title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      link(href=url + post.url)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      updated #{dx(post.date)}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      id #{url.replace(/\\/$/, &quot;&quot;)}#{post.url}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      content(type=&quot;html&quot;) !{h(post.content)}\n'</span>;
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>, <span class="variable">title</span>: <span class="variable">title</span>, <span class="variable">url</span>: <span class="variable">url</span>, <span class="variable">feed</span>: <span class="variable">feed</span> }) });
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Returns unique sorted tags for every post.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Array</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">allTags</span>: <span class="keyword">function</span>() {
+    <span class="keyword">var</span> <span class="variable">allTags</span> = [];
+
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="this">this</span>.<span class="variable">posts</span>) {
+      <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">posts</span>[<span class="variable">key</span>].<span class="variable">tags</span>) {
+        <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">i</span> = <span class="number integer">0</span>; <span class="variable">i</span> &<span class="variable">lt</span>; <span class="this">this</span>.<span class="variable">posts</span>[<span class="variable">key</span>].<span class="variable">tags</span>.<span class="variable">length</span>; <span class="variable">i</span>++) {
+          <span class="keyword">var</span> <span class="variable">tag</span> = <span class="this">this</span>.<span class="variable">posts</span>[<span class="variable">key</span>].<span class="variable">tags</span>[<span class="variable">i</span>];
+          <span class="keyword">if</span> (<span class="variable">allTags</span>.<span class="variable">indexOf</span>(<span class="variable">tag</span>) === -<span class="number integer">1</span>) <span class="variable">allTags</span>.<span class="variable">push</span>(<span class="variable">tag</span>);
+        }
+      }
+    }
+
+    <span class="variable">allTags</span>.<span class="variable">sort</span>(<span class="keyword">function</span>(<span class="variable">a</span>, <span class="variable">b</span>) {
+      <span class="variable">a</span> = <span class="variable">a</span>.<span class="variable">toLowerCase</span>();
+      <span class="variable">b</span> = <span class="variable">b</span>.<span class="variable">toLowerCase</span>();
+      <span class="keyword">if</span> (<span class="variable">a</span> &<span class="variable">lt</span>; <span class="variable">b</span>) <span class="keyword">return</span> -<span class="number integer">1</span>;
+      <span class="keyword">if</span> (<span class="variable">a</span> &<span class="variable">gt</span>; <span class="variable">b</span>) <span class="keyword">return</span> <span class="number integer">1</span>;
+      <span class="keyword">return</span> <span class="number integer">0</span>;
+    });
+
+    <span class="keyword">return</span> <span class="variable">allTags</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Display a list of tags.</p>
+
+<h2>TODO Link options</h2>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Array</em>  Tag names</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">tags</span>: <span class="keyword">function</span>(<span class="variable">tags</span>) {
+    <span class="keyword">return</span> <span class="variable">tags</span>.<span class="variable">map</span>(<span class="keyword">function</span>(<span class="variable">tag</span>) {
+      <span class="keyword">return</span> <span class="string">'&lt;a href=&quot;/tags.html#'</span> + <span class="variable">escape</span>(<span class="variable">tag</span>) + <span class="string">'&quot;&gt;'</span> + <span class="variable">tag</span> + <span class="string">'&lt;/a&gt;'</span>;
+    }).<span class="variable">join</span>(<span class="string">', '</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Renders a post using the hNews microformat, based on:</p>
+
+<p>http://www.readability.com/publishers/guidelines/#view-exampleGuidelines</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  A post object</p></li><li><p><strong>return</strong>: <em>String</em>  Post in the hNews format</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">hNews</span>: <span class="keyword">function</span>(<span class="variable">post</span>, <span class="variable">summary</span>) {
+    <span class="keyword">var</span> <span class="variable">template</span> = <span class="string">''</span>;
+    <span class="variable">template</span> += <span class="string">'article.hentry\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  header\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    h1.entry-title\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      a(href=post.url) !{post.title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    time.updated(datetime=dx(post.date), pubdate) #{ds(post.date)}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    p.byline.author.vcard by &lt;span class=&quot;fn&quot;&gt;#{post.author}&lt;/span&gt;\n'</span>;
+
+    <span class="keyword">if</span> (<span class="variable">post</span>.<span class="variable">tags</span>) <span class="variable">template</span> += <span class="string">'    div.tags !{tags(post.tags)}\n'</span>;
+    <span class="variable">template</span> += <span class="variable">summary</span> ? <span class="string">'  !{truncateParagraphs(post.content, 2, &quot;&lt;p&gt;&lt;a class=\\&quot;read-more\\&quot; href=\\&quot;'</span> + <span class="variable">post</span>.<span class="variable">url</span> + <span class="string">'\\&quot;&gt;Read More &rarr;&lt;/a&gt;&lt;/p&gt;&quot;)}\n'</span> : <span class="string">'  !{post.content}\n'</span>;
+
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="this">this</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span> }) });
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Formats a date with date formatting rules according to underscore.date's rules.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Date</em>  Date to format</p></li><li><p><strong>param</strong>: <em>String</em>  Date format</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">df</span>: <span class="keyword">function</span>(<span class="variable">date</span>, <span class="variable">format</span>) {
+    <span class="keyword">return</span> <span class="variable">_date</span>(<span class="variable">date</span>).<span class="variable">format</span>(<span class="variable">format</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Short date (01 January 2001).</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Date</em>  Date to format</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">ds</span>: <span class="keyword">function</span>(<span class="variable">date</span>) {
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">df</span>(<span class="variable">date</span>, <span class="string">'DD MMMM YYYY'</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Atom date formatting.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Date</em>  Date to format</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">dx</span>: <span class="keyword">function</span>(<span class="variable">date</span>) {
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">df</span>(<span class="variable">date</span>, <span class="string">'YYYY-MM-DDTHH:MM:ssZ'</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Escapes brackets and ampersands.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to escape</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">h</span>: <span class="keyword">function</span>(<span class="variable">text</span>) {
+    <span class="keyword">return</span> <span class="variable">text</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">text</span>.<span class="variable">replace</span>(<span class="regexp">/&amp;/g</span>,<span class="string">'&amp;'</span>).<span class="variable">replace</span>(<span class="regexp">/&lt;/g</span>,<span class="string">'&lt;'</span>).<span class="variable">replace</span>(<span class="regexp">/&gt;/g</span>,<span class="string">'&gt;'</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Truncates HTML based on paragraph counts.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to truncate</p></li><li><p><strong>param</strong>: <em>Integer</em>  Number of paragraphs</p></li><li><p><strong>param</strong>: <em>String</em>  Text to append when truncated</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">truncateParagraphs</span>: <span class="keyword">function</span>(<span class="variable">text</span>, <span class="variable">length</span>, <span class="variable">moreText</span>) {
+    <span class="keyword">var</span> <span class="variable">t</span> = <span class="variable">text</span>.<span class="variable">split</span>(<span class="string">'&lt;/p&gt;'</span>);
+    <span class="keyword">return</span> <span class="variable">t</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">length</span> ? <span class="variable">text</span> : <span class="variable">t</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">join</span>(<span class="string">'&lt;/p&gt;'</span>) + <span class="string">'&lt;/p&gt;'</span> + <span class="variable">moreText</span>;
+  }
+};
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">helpers</span>;
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/paginator.js"><a href="#">paginator</a></h2></td><td>lib/paginator.js</td></tr><tr class="code">
+<td class="docs">
+<p>Initialize <code>Paginator</code> with the number of items per-page and a list of items.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Integer</em>  Number of items per-page</p></li><li><p><strong>param</strong>: <em>Object</em>  A list of items (generally posts)</p></li><li><p><strong>api</strong>: <em>public</em></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="class">Paginator</span>(<span class="variable">perPage</span>, <span class="variable">items</span>) {
+  <span class="this">this</span>.<span class="variable">allItems</span> = <span class="this">this</span>.<span class="variable">sort</span>(<span class="variable">items</span>);
+  <span class="this">this</span>.<span class="variable">perPage</span> = <span class="variable">perPage</span>;
+  <span class="this">this</span>.<span class="variable">items</span> = <span class="this">this</span>.<span class="variable">allItems</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">perPage</span>);
+  <span class="this">this</span>.<span class="variable">previousPage</span> = <span class="number integer">0</span>;
+  <span class="this">this</span>.<span class="variable">nextPage</span> = <span class="number integer">2</span>;
+  <span class="this">this</span>.<span class="variable">page</span> = <span class="number integer">1</span>;
+  <span class="this">this</span>.<span class="variable">pages</span> = <span class="class">Math</span>.<span class="variable">round</span>(<span class="this">this</span>.<span class="variable">allItems</span>.<span class="variable">length</span> / <span class="this">this</span>.<span class="variable">perPage</span>) + <span class="number integer">1</span>;
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Moves to the next page.</p>
+
+<p> </p>
+</td>
+<td class="code">
+<pre><code><span class="class">Paginator</span>.<span class="variable">prototype</span>.<span class="variable">advancePage</span> = <span class="keyword">function</span>() {
+  <span class="this">this</span>.<span class="variable">page</span>++;
+  <span class="this">this</span>.<span class="variable">previousPage</span> = <span class="this">this</span>.<span class="variable">page</span> - <span class="number integer">1</span>;
+  <span class="this">this</span>.<span class="variable">nextPage</span> = <span class="this">this</span>.<span class="variable">page</span> + <span class="number integer">1</span>;
+
+  <span class="keyword">var</span> <span class="variable">start</span> = (<span class="this">this</span>.<span class="variable">page</span> - <span class="number integer">1</span>) * <span class="this">this</span>.<span class="variable">perPage</span>
+    , <span class="variable">end</span> = <span class="this">this</span>.<span class="variable">page</span> * <span class="this">this</span>.<span class="variable">perPage</span>;
+  <span class="this">this</span>.<span class="variable">items</span> = <span class="this">this</span>.<span class="variable">allItems</span>.<span class="variable">slice</span>(<span class="variable">start</span>, <span class="variable">end</span>); 
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Sort items according to date.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Array</em>  Array of items</p></li><li><p><strong>return</strong>: <em>Integer</em>  <code>-1</code>, <code>1</code>, <code>0</code> according to the date comparison</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">Paginator</span>.<span class="variable">prototype</span>.<span class="variable">sort</span> = <span class="keyword">function</span>(<span class="variable">items</span>) {
+  <span class="keyword">return</span> <span class="variable">items</span>.<span class="variable">sort</span>(<span class="keyword">function</span>(<span class="variable">a</span>, <span class="variable">b</span>) {
+    <span class="variable">a</span> = <span class="variable">a</span>.<span class="variable">date</span>.<span class="variable">valueOf</span>();
+    <span class="variable">b</span> = <span class="variable">b</span>.<span class="variable">date</span>.<span class="variable">valueOf</span>();
+    <span class="keyword">if</span> (<span class="variable">a</span> &<span class="variable">gt</span>; <span class="variable">b</span>)
+      <span class="keyword">return</span> -<span class="number integer">1</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">a</span> &<span class="variable">lt</span>; <span class="variable">b</span>)
+      <span class="keyword">return</span> <span class="number integer">1</span>;
+    <span class="keyword">return</span> <span class="number integer">0</span>;
+  });
+};
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">Paginator</span>;
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/pop.js"><a href="#">pop</a></h2></td><td>lib/pop.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies and local variables.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/file_map'</span>)
+  , <span class="class">SiteBuilder</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/site_builder'</span>)
+  , <span class="variable">cliTools</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/cli_tools'</span>)
+  , <span class="variable">readConfig</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>)
+  , <span class="variable">usage</span>
+  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>)
+  , <span class="variable">version</span> = <span class="string">'0.0.1'</span>;
+
+<span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
+<span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
+<span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
+<span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
+<span class="variable">usage</span> += <span class="string">'server                Create a server on port 4000 for _site/\n\n'</span>;
+<span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
+<span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Loads the config script and sets the local variable.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Object</em>  Config object</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">loadConfig</span>() {
+  <span class="keyword">var</span> <span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>()
+    , <span class="variable">config</span> = <span class="variable">readConfig</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">root</span>, <span class="string">'_config.json'</span>));
+  <span class="variable">config</span>.<span class="variable">root</span> = <span class="variable">root</span>;
+  <span class="keyword">return</span> <span class="variable">config</span>;
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Loads configuration then runs <code>generateSite</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>params</strong>: <em>Boolean</em>  Use a HTTP sever?</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">useServer</span>) {
+  <span class="variable">generateSite</span>(<span class="variable">loadConfig</span>(), <span class="variable">useServer</span>);
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Runs <code>FileMap</code> and <code>SiteBuilder</code> based on the config.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>params</strong>: <em>Object</em>  Configuration options</p></li><li><p><strong>params</strong>: <em>Boolean</em>  Use a HTTP sever?</p></li><li><p><strong>return</strong>: <em>SiteBuilder</em>  A <code>SiteBuilder</code> instance</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">generateSite</span>(<span class="variable">config</span>, <span class="variable">useServer</span>) {
+  <span class="keyword">var</span> <span class="variable">fileMap</span> = <span class="keyword">new</span> <span class="class">FileMap</span>(<span class="variable">config</span>)
+    , <span class="variable">siteBuilder</span> = <span class="keyword">new</span> <span class="class">SiteBuilder</span>(<span class="variable">config</span>)
+    , <span class="variable">server</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/server'</span>)(<span class="variable">siteBuilder</span>);
+
+  <span class="variable">fileMap</span>.<span class="variable">walk</span>();
+  <span class="variable">fileMap</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
+    <span class="variable">siteBuilder</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
+    <span class="variable">siteBuilder</span>.<span class="variable">build</span>();
+  });
+
+  <span class="variable">siteBuilder</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
+    <span class="keyword">if</span> (<span class="variable">useServer</span>) {
+      <span class="variable">server</span>.<span class="variable">run</span>();
+      <span class="variable">server</span>.<span class="variable">watch</span>();
+    }
+  });
+
+  <span class="keyword">return</span> <span class="variable">siteBuilder</span>;
+}
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="keyword">function</span>() {
+  <span class="keyword">while</span> (<span class="variable">args</span>.<span class="variable">length</span>) {
+    <span class="variable">arg</span> = <span class="variable">args</span>.<span class="variable">shift</span>();
+    <span class="keyword">switch</span> (<span class="variable">arg</span>) {
+      <span class="keyword">case</span> <span class="string">'server'</span>:
+        <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">true</span>);
+      <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'post'</span>:
+        <span class="variable">cliTools</span>.<span class="variable">makePost</span>(<span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
+      <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'new'</span>:
+        <span class="variable">cliTools</span>.<span class="variable">makeSite</span>(<span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
+      <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'-v'</span>:
+      <span class="keyword">case</span> <span class="string">'--version'</span>:
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'pop version:'</span>, <span class="variable">version</span>);
+        <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>);
+      <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'-h'</span>:
+      <span class="keyword">case</span> <span class="string">'--help'</span>:
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">usage</span>);
+        <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
+      <span class="keyword">default</span>:
+        <span class="variable">loadConfigAndGenerateSite</span>();
+    }
+  }
+};
+
+<span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">SiteBuilder</span> = <span class="class">SiteBuilder</span>;
+<span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">FileMap</span> = <span class="class">FileMap</span>;
+<span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">generateSite</span> = <span class="variable">generateSite</span>;
+<span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">cliTools</span> = <span class="variable">cliTools</span>;
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/server.js"><a href="#">server</a></h2></td><td>lib/server.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies and local variables.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">watch</span> = <span class="variable">require</span>(<span class="string">'nodewatch'</span>)
+  , <span class="variable">siteBuilder</span>;</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Instantiates and runs the Express server.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">server</span>() {
+  <span class="comment">// TODO: Show require express error</span>
+  <span class="keyword">var</span> <span class="variable">express</span> = <span class="variable">require</span>(<span class="string">'express'</span>),
+      <span class="variable">app</span> = <span class="variable">express</span>.<span class="variable">createServer</span>();
+
+  <span class="variable">app</span>.<span class="variable">configure</span>(<span class="keyword">function</span>() {
+    <span class="variable">app</span>.<span class="variable">use</span>(<span class="variable">express</span>.<span class="variable">static</span>(<span class="variable">siteBuilder</span>.<span class="variable">outputRoot</span>));
+    <span class="variable">app</span>.<span class="variable">use</span>(<span class="variable">express</span>.<span class="variable">errorHandler</span>({ <span class="variable">dumpExceptions</span>: <span class="variable">true</span>, <span class="variable">showStack</span>: <span class="variable">true</span> }));
+  });
+
+  <span class="comment">// Map missing trailing slashes for posts</span>
+  <span class="variable">app</span>.<span class="variable">get</span>(<span class="string">'*'</span>, <span class="keyword">function</span>(<span class="variable">req</span>, <span class="variable">res</span>) {
+    <span class="keyword">var</span> <span class="variable">postPath</span> = <span class="variable">siteBuilder</span>.<span class="variable">outputRoot</span> + <span class="variable">req</span>.<span class="variable">url</span> + <span class="string">'/'</span>;
+    <span class="comment">// TODO: Security</span>
+    <span class="keyword">if</span> (<span class="variable">req</span>.<span class="variable">url</span>.<span class="variable">match</span>(<span class="regexp">/[^/</span>]$/) &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">postPath</span>)) {
+      <span class="variable">res</span>.<span class="variable">redirect</span>(<span class="variable">req</span>.<span class="variable">url</span> + <span class="string">'/'</span>);
+    } <span class="keyword">else</span> {
+      <span class="variable">res</span>.<span class="variable">send</span>(<span class="string">'404'</span>);
+    }
+  });
+
+  <span class="comment">// TODO: Config</span>
+  <span class="variable">app</span>.<span class="variable">listen</span>(<span class="number integer">4000</span>);
+  <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Listening on port 4000'</span>);
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Watches for file changes and regenerates files as required.
+## TODO Work in progress
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="variable">watchChanges</span>() {
+  <span class="comment">// TODO: What happens when files are added?</span>
+  <span class="comment">// TODO: Other directories?</span>
+  <span class="variable">watch</span>
+    .<span class="variable">add</span>(<span class="variable">siteBuilder</span>.<span class="variable">root</span>)
+    .<span class="variable">add</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">siteBuilder</span>.<span class="variable">root</span>, <span class="string">'_posts'</span>))
+    .<span class="variable">onChange</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'File changed:'</span>, <span class="variable">file</span>);
+      <span class="variable">siteBuilder</span>.<span class="variable">buildChange</span>(<span class="variable">file</span>);
+    });
+}
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="keyword">function</span>(<span class="variable">s</span>) {
+  <span class="variable">siteBuilder</span> = <span class="variable">s</span>;
+  <span class="keyword">return</span> {
+    <span class="variable">run</span>: <span class="variable">server</span>
+  , <span class="variable">watch</span>: <span class="variable">watchChanges</span>
+  };
+};
+
+</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/site_builder.js"><a href="#">site_builder</a></h2></td><td>lib/site_builder.js</td></tr><tr class="code">
+<td class="docs">
+<p>Module dependencies.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">textile</span> = <span class="variable">require</span>(<span class="string">'stextile'</span>)
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'./graceful'</span>)
+  , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">jade</span> = <span class="variable">require</span>(<span class="string">'jade'</span>)
+  , <span class="variable">stylus</span> = <span class="variable">require</span>(<span class="string">'stylus'</span>)
+  , <span class="variable">yamlish</span> = <span class="variable">require</span>(<span class="string">'yamlish'</span>)
+  , <span class="variable">markdown</span> = <span class="variable">require</span>(<span class="string">'markdown-js'</span>)
+  , <span class="class">Paginator</span> = <span class="variable">require</span>(<span class="string">'./paginator'</span>)
+  , <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="string">'./file_map.js'</span>).<span class="class">FileMap</span>
+  , <span class="class">EventEmitter</span> = <span class="variable">require</span>(<span class="string">'events'</span>).<span class="class">EventEmitter</span>
+  , <span class="variable">filters</span> = <span class="variable">require</span>(<span class="string">'./filters'</span>)
+  , <span class="variable">helpers</span> = <span class="variable">require</span>(<span class="string">'./helpers'</span>)
+  , <span class="variable">userHelpers</span> = {}
+  , <span class="variable">userFilters</span> = {};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Initialize <code>SiteBuilder</code> with a config object and <code>FileMap</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  Config options</p></li><li><p><strong>param</strong>: <em>FileMap</em>  A <code>FileMap</code> object</p></li><li><p><strong>api</strong>: <em>public</em></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">function</span> <span class="class">SiteBuilder</span>(<span class="variable">config</span>, <span class="variable">fileMap</span>) {
+  <span class="this">this</span>.<span class="variable">config</span> = <span class="variable">config</span>;
+  <span class="this">this</span>.<span class="variable">root</span> = <span class="variable">config</span>.<span class="variable">root</span>;
+
+  <span class="keyword">var</span> <span class="variable">helperFile</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_lib'</span>, <span class="string">'helpers.js'</span>);
+  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">helperFile</span>)) {
+    <span class="variable">userHelpers</span> = <span class="variable">require</span>(<span class="variable">helperFile</span>);
+  }
+
+  <span class="keyword">var</span> <span class="variable">filterFile</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_lib'</span>, <span class="string">'filters.js'</span>);
+  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">filterFile</span>)) {
+    <span class="variable">userFilters</span> = <span class="variable">require</span>(<span class="variable">filterFile</span>);
+  }
+
+  <span class="comment">// TODO Make this configurable</span>
+  <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">config</span>.<span class="variable">output</span> || <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_site'</span>);
+  <span class="this">this</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
+  <span class="this">this</span>.<span class="variable">posts</span> = [];
+  <span class="this">this</span>.<span class="variable">helpers</span> = <span class="variable">helpers</span>;
+  <span class="this">this</span>.<span class="variable">events</span> = <span class="keyword">new</span> <span class="class">EventEmitter</span>();
+  <span class="this">this</span>.<span class="variable">includes</span> = {};
+}</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Applies helpers and "user helpers" to an object so it can be easily passed to Jade.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  An object to merge with</p></li><li><p><strong>return</strong>: <em>Object</em>  The mutated object</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">applyHelpers</span> = <span class="keyword">function</span>(<span class="variable">obj</span>) {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>
+    , <span class="variable">key</span>;
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="this">this</span>.<span class="variable">helpers</span>) {
+    <span class="variable">obj</span>[<span class="variable">key</span>] = <span class="this">this</span>.<span class="variable">bind</span>(<span class="this">this</span>.<span class="variable">helpers</span>[<span class="variable">key</span>]);
+  }
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">userHelpers</span>) {
+    <span class="variable">obj</span>[<span class="variable">key</span>] = <span class="this">this</span>.<span class="variable">bind</span>(<span class="variable">userHelpers</span>[<span class="variable">key</span>]);
+  }
+
+  <span class="variable">obj</span>.<span class="variable">include</span> = <span class="keyword">function</span>(<span class="variable">template</span>) {
+    <span class="keyword">return</span> <span class="variable">self</span>.<span class="variable">includes</span>[<span class="variable">template</span>];
+  };
+
+  <span class="comment">// TODO: Only do this once</span>
+  <span class="keyword">if</span> (<span class="variable">obj</span>.<span class="variable">paginate</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">obj</span>.<span class="variable">paginator</span>)
+    <span class="variable">obj</span>.<span class="variable">paginate</span> = <span class="variable">obj</span>.<span class="variable">paginate</span>(<span class="variable">obj</span>.<span class="variable">paginator</span>);
+
+  <span class="variable">obj</span>.<span class="variable">site</span> = <span class="variable">self</span>;
+
+  <span class="keyword">return</span> <span class="variable">obj</span>;
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Binds methods to this <code>SiteBuilder</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Function</em>  The function to bind</p></li><li><p><strong>return</strong>: <em>Function</em>  The bound function</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">bind</span> = <span class="keyword">function</span>(<span class="variable">fn</span>) {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+  <span class="keyword">return</span> <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>, <span class="variable">arguments</span>);
+  };
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Builds the site.  This is asynchronous, so various counters
+and events are used to track progress.</p>
+
+<p> </p>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">build</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="keyword">function</span> <span class="variable">build</span>() {
+    <span class="keyword">var</span> <span class="variable">posts</span> = <span class="variable">self</span>.<span class="variable">findPosts</span>()
+      , <span class="variable">otherFiles</span> = <span class="variable">self</span>.<span class="variable">otherRenderedFiles</span>()
+      , <span class="variable">staticFiles</span> = <span class="variable">self</span>.<span class="variable">staticFiles</span>()
+      , <span class="variable">autoGen</span> = <span class="variable">self</span>.<span class="variable">autoGenerate</span>()
+      , <span class="variable">postsLeft</span> = <span class="variable">posts</span>.<span class="variable">length</span>
+      , <span class="variable">filesLeft</span>;
+
+    <span class="comment">// FIXME: In future not all auto generated files will be related to posts</span>
+    <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span> === <span class="number integer">0</span>) <span class="variable">autoGen</span> = [];
+
+    <span class="variable">filesLeft</span> = <span class="variable">posts</span>.<span class="variable">length</span> + <span class="variable">otherFiles</span>.<span class="variable">length</span> + <span class="variable">staticFiles</span>.<span class="variable">length</span> + <span class="variable">autoGen</span>.<span class="variable">length</span>;
+
+    <span class="keyword">function</span> <span class="variable">checkFinished</span>() {
+      <span class="keyword">if</span> (<span class="variable">filesLeft</span> === <span class="number integer">0</span>) {
+        <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'ready'</span>);
+      }
+    }
+
+    <span class="variable">posts</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+      <span class="variable">self</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+        <span class="variable">filesLeft</span>--;
+        <span class="variable">postsLeft</span>--;
+        <span class="variable">checkFinished</span>();
+        <span class="keyword">if</span> (<span class="variable">postsLeft</span> === <span class="number integer">0</span>) {
+          <span class="variable">autoGen</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+            <span class="variable">self</span>.<span class="variable">autoGenerateFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+              <span class="variable">filesLeft</span>--;
+              <span class="variable">checkFinished</span>();
+            });
+          });
+        }
+      });
+    });
+
+    <span class="variable">otherFiles</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+      <span class="variable">self</span>.<span class="variable">renderFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+        <span class="variable">filesLeft</span>--;
+        <span class="variable">checkFinished</span>();
+      });
+    });
+
+    <span class="variable">staticFiles</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) { 
+      <span class="variable">self</span>.<span class="variable">copyStatic</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+        <span class="variable">filesLeft</span>--;
+        <span class="variable">checkFinished</span>();
+      });
+    });
+  }
+
+  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">once</span>(<span class="string">'cached includes'</span>, <span class="variable">build</span>);
+  <span class="this">this</span>.<span class="variable">cacheIncludes</span>();
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Returns any configured built-in pages,
+or an empty array.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Array</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">autoGenerate</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">autoGenerate</span>) <span class="keyword">return</span> [];
+  <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">autoGenerate</span>;
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Generates a built-in page.  Only atom feeds
+are currently available.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Page/file details from the config object</p></li><li><p><strong>param</strong>: <em>Function</em>  A callback function to run on completion</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">autoGenerateFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">fn</span>) {
+  <span class="comment">// TODO: Allow this to be easily extended</span>
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">feed</span>) {
+    <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'ERROR: Built-in feed generation requires config values for: url and title.'</span>); 
+    } <span class="keyword">else</span> {
+      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + &quot;'</span>, <span class="string">'&quot; + this.config.title + &quot;'</span>, <span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
+      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
+      <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">feed</span>), <span class="variable">html</span>);
+      <span class="variable">fn</span>();
+    }
+  }
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Builds a single file.
+## TODO Work in progress.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name to build</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">buildChange</span> = <span class="keyword">function</span>(<span class="variable">file</span>) {
+  <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">isExcludedFile</span>(<span class="variable">file</span>)) <span class="keyword">return</span>;
+
+  <span class="variable">file</span> = {
+    <span class="variable">type</span>: <span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">fileType</span>(<span class="variable">file</span>)
+  , <span class="variable">name</span>: <span class="variable">file</span>
+  };
+
+  <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span>.<span class="variable">indexOf</span>(<span class="string">'post'</span>) !== -<span class="number integer">1</span>) {
+    <span class="this">this</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>);
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file jade'</span>) {
+    <span class="this">this</span>.<span class="variable">renderFile</span>(<span class="variable">file</span>);
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file'</span>) {
+    <span class="this">this</span>.<span class="variable">copyStatic</span>(<span class="variable">file</span>);
+  }
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Iterates over the files in the <code>FileMap</code> object to find posts.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Array</em>  A list of posts</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">findPosts</span> = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">filter</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+    <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">type</span>.<span class="variable">indexOf</span>(<span class="string">'post'</span>) !== -<span class="number integer">1</span>;
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Iterates over the files in the <code>FileMap</code> object to find "other" rendered files.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Array</em>  A list of files</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">otherRenderedFiles</span> = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">filter</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+    <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file jade'</span> || <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file styl'</span>;
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Iterates over the files in the <code>FileMap</code> object to find static files that require copying.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>return</strong>: <em>Array</em>  A list of files</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">staticFiles</span> = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">filter</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+    <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file'</span>;
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Copies a static file.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  The file name</p></li><li><p><strong>param</strong>: <em>Function</em>  A callback to run on completion</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">copyStatic</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">fn</span>) {
+  <span class="keyword">var</span> <span class="variable">outDir</span> = <span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">file</span>.<span class="variable">name</span>.<span class="variable">replace</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">''</span>)))
+    , <span class="variable">fileName</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">outDir</span>, <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>))
+    , <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="comment">// TODO: Use a configurable ignore list</span>
+  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">match</span>(<span class="regexp">/^_/</span>)) <span class="keyword">return</span> <span class="variable">fn</span>();
+
+  <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">outDir</span>, <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+    <span class="keyword">if</span> (<span class="variable">err</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">outDir</span>);
+      <span class="keyword">throw</span>(<span class="variable">err</span>);
+    }
+
+    <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
+      <span class="keyword">if</span> (<span class="variable">err</span>) {
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading file:'</span>, <span class="variable">file</span>.<span class="variable">name</span>);
+        <span class="keyword">throw</span>(<span class="variable">err</span>);
+      }
+
+      <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">fileName</span>, <span class="variable">data</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+        <span class="keyword">if</span> (<span class="variable">err</span>) {
+          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+          <span class="keyword">throw</span>(<span class="variable">err</span>);
+        }
+
+        <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
+      });
+    });
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Parse YAML meta data for both files and posts.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name (used by logging on errors)</p></li><li><p><strong>param</strong>: <em>String</em>  Data to parse</p></li><li><p><strong>return</strong>: <em>Array</em>  Parsed YAML</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">parseMeta</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">data</span>) {
+  <span class="keyword">function</span> <span class="variable">clean</span>(<span class="variable">yaml</span>) {
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="variable">yaml</span>) {
+      <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="variable">yaml</span>[<span class="variable">key</span>] === <span class="string">'string'</span>) {
+        <span class="keyword">var</span> <span class="variable">m</span> = <span class="variable">yaml</span>[<span class="variable">key</span>].<span class="variable">match</span>(<span class="regexp">/^&quot;([^&quot;]*)&quot;$/</span>);
+        <span class="keyword">if</span> (<span class="variable">m</span>) <span class="variable">yaml</span>[<span class="variable">key</span>] = <span class="variable">m</span>[<span class="number integer">1</span>];
+      }
+    }
+    <span class="keyword">return</span> <span class="variable">yaml</span>;
+  }
+
+  <span class="comment">// FIXME: This shouldn't be used, my articles are badly formatted</span>
+  <span class="keyword">function</span> <span class="variable">fix</span>(<span class="variable">text</span>) {
+    <span class="keyword">if</span> (!<span class="variable">text</span>) <span class="keyword">return</span>;
+    <span class="keyword">return</span> <span class="variable">text</span>.<span class="variable">split</span>(<span class="string">'\n'</span>).<span class="variable">map</span>(<span class="keyword">function</span>(<span class="variable">line</span>) {
+      <span class="keyword">if</span> (<span class="variable">line</span>.<span class="variable">match</span>(<span class="regexp">/^- /</span>))
+        <span class="variable">line</span> = <span class="string">'  '</span> + <span class="variable">line</span>;
+      <span class="keyword">return</span> <span class="variable">line</span>;
+    }).<span class="variable">join</span>(<span class="string">'\n'</span>);
+  }
+
+  <span class="keyword">var</span> <span class="variable">dataChunks</span> = <span class="variable">data</span>.<span class="variable">split</span>(<span class="string">'---'</span>)
+    , <span class="variable">parsedYAML</span> = [];
+
+  <span class="keyword">try</span> {
+    <span class="keyword">if</span> (<span class="variable">dataChunks</span>[<span class="number integer">1</span>]) {
+      <span class="variable">parsedYAML</span> = <span class="variable">clean</span>(<span class="variable">yamlish</span>.<span class="variable">decode</span>(<span class="variable">fix</span>(<span class="variable">dataChunks</span>[<span class="number integer">1</span>] || <span class="variable">data</span>)));
+      <span class="keyword">return</span> [<span class="variable">parsedYAML</span>, (<span class="variable">dataChunks</span>[<span class="number integer">2</span>] || <span class="string">''</span>).<span class="variable">trim</span>()];
+    } <span class="keyword">else</span> {
+      <span class="keyword">return</span> [<span class="string">''</span>, <span class="variable">data</span>];
+    }
+  } <span class="keyword">catch</span> (<span class="variable">e</span>) {
+    <span class="variable">console</span>.<span class="variable">log</span>(&<span class="variable">quot</span>;<span class="class">Couldn</span><span class="string">'t parse YAML in:&quot;, file, '</span>:', <span class="variable">e</span>);
+  }
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Writes a file, making directories recursively when required.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name to write to</p></li><li><p><strong>param</strong>: <em>String</em>  Contents of the file</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">write</span> = <span class="keyword">function</span>(<span class="variable">fileName</span>, <span class="variable">content</span>) {
+  <span class="keyword">if</span> (!<span class="variable">content</span>) {
+    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'No content for:'</span>, <span class="variable">fileName</span>);
+    <span class="keyword">return</span>;
+  }
+
+  <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>), <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+    <span class="keyword">if</span> (<span class="variable">err</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>));
+      <span class="keyword">throw</span>(<span class="variable">err</span>);
+    }
+
+    <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">fileName</span>, <span class="variable">content</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+      <span class="keyword">if</span> (<span class="variable">err</span>) {
+        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+        <span class="keyword">throw</span>(<span class="variable">err</span>);
+      }
+    });
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Returns a full path name.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Relative path name, i.e., <code>_posts/</code></p></li><li><p><strong>param</strong>: <em>String</em>  File name</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">outFileName</span> = <span class="keyword">function</span>(<span class="variable">subDir</span>, <span class="variable">name</span>) {
+  <span class="keyword">return</span> <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">outputRoot</span>, <span class="variable">subDir</span>, <span class="variable">name</span>);
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Caches templates inside <code>_includes/</code>
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">cacheIncludes</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="keyword">function</span> <span class="variable">done</span>() {
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'cached includes'</span>);
+  }
+
+  <span class="variable">path</span>.<span class="variable">exists</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_includes'</span>), <span class="keyword">function</span>(<span class="variable">exists</span>) {
+    <span class="keyword">if</span> (!<span class="variable">exists</span>) {
+      <span class="variable">done</span>();
+    } <span class="keyword">else</span> {
+      <span class="variable">fs</span>.<span class="variable">readdir</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">'_includes'</span>), <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">files</span>) {
+        <span class="keyword">if</span> (!<span class="variable">files</span>) <span class="keyword">return</span>;
+        <span class="keyword">var</span> <span class="variable">file</span>;
+
+        <span class="keyword">if</span> (<span class="variable">files</span>.<span class="variable">length</span> === <span class="number integer">0</span>) <span class="variable">done</span>();
+
+        <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">i</span> = <span class="number integer">0</span>; <span class="variable">i</span> &<span class="variable">lt</span>; <span class="variable">files</span>.<span class="variable">length</span>; <span class="variable">i</span>++) {
+          <span class="variable">file</span> = <span class="variable">files</span>[<span class="variable">i</span>];
+          <span class="comment">// TODO: Configurable templates</span>
+          <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>) !== <span class="string">'.jade'</span>) {
+            <span class="keyword">if</span> (<span class="variable">i</span> === <span class="variable">files</span>.<span class="variable">length</span>) <span class="keyword">return</span> <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'cached includes'</span>);
+          } <span class="keyword">else</span> {
+            <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">'_includes'</span>, <span class="variable">file</span>), <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
+              <span class="comment">// TODO: This won't cope with _include/file/file, but people will expect this</span>
+              <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({}) })
+                , <span class="variable">name</span> = <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>).<span class="variable">replace</span>(<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>), <span class="string">''</span>);
+              <span class="variable">self</span>.<span class="variable">includes</span>[<span class="variable">name</span>] = <span class="variable">html</span>;
+
+              <span class="keyword">if</span> (<span class="variable">i</span> === <span class="variable">files</span>.<span class="variable">length</span>) <span class="variable">done</span>();
+            });
+          }
+        }
+      });
+    }
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Renders a post using a template.  Called by <code>renderPost</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Template file name</p></li><li><p><strong>param</strong>: <em>Object</em>  A post object</p></li><li><p><strong>param</strong>: <em>String</em>  The post's content</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">renderTemplate</span> = <span class="keyword">function</span>(<span class="variable">templateFile</span>, <span class="variable">post</span>, <span class="variable">content</span>) {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+  <span class="variable">templateFile</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_layouts'</span>, <span class="variable">templateFile</span> + <span class="string">'.jade'</span>);
+
+  <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">templateFile</span>, <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
+    <span class="keyword">if</span> (<span class="variable">err</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error in: '</span> + <span class="variable">templateFile</span>);
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">err</span>);
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">err</span>.<span class="variable">message</span>);
+      <span class="keyword">throw</span>(<span class="variable">err</span>);
+    }
+
+    <span class="keyword">try</span> {
+      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span>, <span class="variable">content</span>: <span class="variable">content</span> }) })
+        , <span class="variable">fileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(<span class="variable">post</span>.<span class="variable">fileName</span>, <span class="string">'index.html'</span>)
+        , <span class="variable">dirName</span> = <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>);
+    } <span class="keyword">catch</span> (<span class="variable">e</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error rendering:'</span>, <span class="variable">templateFile</span>);
+      <span class="keyword">throw</span>(<span class="variable">e</span>);
+    }
+
+    <span class="variable">path</span>.<span class="variable">exists</span>(<span class="variable">dirName</span>, <span class="keyword">function</span>(<span class="variable">exists</span>) {
+      <span class="keyword">if</span> (<span class="variable">exists</span>) {
+        <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">fileName</span>, <span class="variable">html</span>);
+      } <span class="keyword">else</span> {
+        <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">dirName</span>, <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
+          <span class="keyword">if</span> (<span class="variable">err</span>) {
+            <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error making directory:'</span>, <span class="variable">dirName</span>);
+            <span class="keyword">throw</span>(<span class="variable">err</span>);
+          }
+          <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">fileName</span>, <span class="variable">html</span>);
+        });
+      }
+    });
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Renders a generic Jade file and will supply pagination if required.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  File name</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback to run on completion</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">renderFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">fn</span>) {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file styl'</span>) {
+    <span class="keyword">var</span> <span class="variable">outFileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(
+      <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">file</span>.<span class="variable">name</span>.<span class="variable">replace</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">''</span>)),
+      <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">replace</span>(<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>), <span class="string">'.css'</span>)
+    );
+
+    <span class="keyword">return</span> <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">fileData</span>) {
+      <span class="variable">stylus</span>.<span class="variable">render</span>(<span class="variable">fileData</span>, { <span class="variable">filename</span>: <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">outFileName</span>) }, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">css</span>) {
+        <span class="keyword">if</span> (<span class="variable">err</span>) <span class="keyword">throw</span> <span class="variable">err</span>;
+        <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">css</span>);
+      });
+    });
+  }
+
+  <span class="keyword">function</span> <span class="variable">render</span>(<span class="variable">fileData</span>, <span class="variable">meta</span>, <span class="variable">layoutData</span>, <span class="variable">dirName</span>) {
+    <span class="comment">// Use .html for file extensions unless the file has the format file.ext.jade</span>
+    <span class="keyword">var</span> <span class="variable">ext</span> = <span class="variable">file</span>.<span class="variable">name</span>.<span class="variable">match</span>(<span class="string">'\\.[^.]*\\'</span> + <span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>) + <span class="string">'$'</span>) ? <span class="string">''</span> : <span class="string">'.html'</span>;
+    <span class="variable">dirName</span> = <span class="variable">dirName</span> || <span class="string">''</span>;
+
+    <span class="keyword">var</span> <span class="variable">outFileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(
+      <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">file</span>.<span class="variable">name</span>.<span class="variable">replace</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">''</span>)) + <span class="variable">dirName</span>,
+      <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">replace</span>(<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>), <span class="variable">ext</span>)
+    );
+
+    <span class="keyword">var</span> <span class="variable">fileContent</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">fileData</span>, {
+      <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">self</span>.<span class="variable">paginator</span>, <span class="variable">page</span>: <span class="variable">meta</span> }),
+    });
+
+    <span class="keyword">if</span> (!<span class="variable">layoutData</span>) {
+      <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">fileContent</span>);
+    } <span class="keyword">else</span> {
+      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">content</span>: <span class="variable">fileContent</span> }) });
+      <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">html</span>);
+    }
+
+    <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
+  }
+
+  <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">fileData</span>) {
+    <span class="keyword">var</span> <span class="variable">meta</span> = <span class="variable">self</span>.<span class="variable">parseMeta</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="variable">fileData</span>)
+      , <span class="variable">fileContent</span> = <span class="string">''</span>;
+
+    <span class="variable">fileData</span> = <span class="variable">meta</span>[<span class="number integer">1</span>];
+    <span class="variable">meta</span> = <span class="variable">meta</span>[<span class="number integer">0</span>];
+
+    <span class="keyword">if</span> (!<span class="variable">meta</span>.<span class="variable">layout</span>) {
+      <span class="variable">self</span>.<span class="variable">paginator</span> = <span class="keyword">new</span> <span class="class">Paginator</span>(<span class="variable">self</span>.<span class="variable">config</span>.<span class="variable">perPage</span>, <span class="variable">self</span>.<span class="variable">posts</span>);
+      <span class="variable">render</span>(<span class="variable">fileData</span>, <span class="variable">meta</span>);
+    } <span class="keyword">else</span> {
+      <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">'_layouts'</span>, <span class="variable">meta</span>.<span class="variable">layout</span> + <span class="string">'.jade'</span>), <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">layoutData</span>) {
+        <span class="keyword">if</span> (<span class="variable">err</span>) {
+          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Unable to read layout:'</span>, <span class="variable">meta</span>.<span class="variable">layout</span> + <span class="string">'.jade'</span>);
+          <span class="keyword">throw</span>(<span class="variable">err</span>);
+        }
+
+        <span class="comment">// TODO: Per page config</span>
+        <span class="variable">self</span>.<span class="variable">paginator</span> = <span class="keyword">new</span> <span class="class">Paginator</span>(<span class="variable">self</span>.<span class="variable">config</span>.<span class="variable">perPage</span>, <span class="variable">self</span>.<span class="variable">posts</span>)
+        <span class="variable">render</span>(<span class="variable">fileData</span>, <span class="variable">meta</span>, <span class="variable">layoutData</span>);
+
+        <span class="keyword">if</span> (<span class="variable">meta</span>.<span class="variable">paginate</span>) {
+          <span class="keyword">while</span> (<span class="variable">self</span>.<span class="variable">paginator</span>.<span class="variable">items</span>.<span class="variable">length</span>) {
+            <span class="variable">self</span>.<span class="variable">paginator</span>.<span class="variable">advancePage</span>();
+            <span class="variable">render</span>(<span class="variable">fileData</span>, <span class="variable">meta</span>, <span class="variable">layoutData</span>, <span class="string">'/page'</span> + <span class="variable">self</span>.<span class="variable">paginator</span>.<span class="variable">page</span> + <span class="string">'/'</span>);
+          }
+        }
+      });
+    }
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Parses a file name according to the permalink format.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  A post file name</p></li><li><p><strong>return</strong>: <em>Object</em>  An object containing the parsed file name</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">parseFileName</span> = <span class="keyword">function</span>(<span class="variable">fileName</span>) {
+  <span class="keyword">var</span> <span class="variable">format</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">permalink</span>
+    , <span class="variable">parts</span> = <span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/(\d+)-(\d+)-(\d+)-([^.]+)/</span>)
+    , <span class="variable">year</span> = <span class="variable">parts</span>[<span class="number integer">1</span>]
+    , <span class="variable">month</span> = <span class="variable">parts</span>[<span class="number integer">2</span>]
+    , <span class="variable">day</span> = <span class="variable">parts</span>[<span class="number integer">3</span>]
+    , <span class="variable">title</span> = <span class="variable">parts</span>[<span class="number integer">4</span>];
+
+  <span class="keyword">return</span> { <span class="variable">date</span>:  <span class="keyword">new</span> <span class="class">Date</span>(<span class="variable">year</span>, <span class="variable">month</span>, <span class="variable">day</span>),
+           <span class="variable">fileName</span>: <span class="variable">format</span>.<span class="variable">replace</span>(<span class="string">':year'</span>, <span class="variable">year</span>).
+                       <span class="variable">replace</span>(<span class="string">':month'</span>, <span class="variable">month</span>).
+                       <span class="variable">replace</span>(<span class="string">':day'</span>, <span class="variable">day</span>).
+                       <span class="variable">replace</span>(<span class="string">':title'</span>, <span class="variable">title</span>) };
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Applies internal and user-supplied content pre-filters.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to transform using filters</p></li><li><p><strong>return</strong>: <em>String</em>  The transformed text</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">applyFilters</span> = <span class="keyword">function</span>(<span class="variable">text</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="variable">filters</span>) {
+    <span class="variable">text</span> = <span class="variable">filters</span>[<span class="variable">key</span>](<span class="variable">text</span>);
+  }
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">userFilters</span>) {
+    <span class="variable">text</span> = <span class="variable">userFilters</span>[<span class="variable">key</span>].<span class="variable">apply</span>(<span class="this">this</span>, [<span class="variable">text</span>]);
+  }
+
+  <span class="keyword">return</span> <span class="variable">text</span>;
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Renders a post.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Post file name</p></li><li><p><strong>param</strong>: <em>Function</em>  A callback to run on completion</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">renderPost</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">fn</span>) {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>
+    , <span class="variable">formatter</span>;
+
+  <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span>.<span class="variable">indexOf</span>(<span class="string">'textile'</span>) !== -<span class="number integer">1</span>) {
+    <span class="variable">formatter</span> = <span class="variable">textile</span>;
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span>.<span class="variable">indexOf</span>(<span class="string">'md'</span>) !== -<span class="number integer">1</span>) {
+    <span class="variable">formatter</span> = <span class="variable">markdown</span>.<span class="variable">makeHtml</span>;
+  }
+
+  <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
+    <span class="keyword">var</span> <span class="variable">meta</span> = <span class="variable">self</span>.<span class="variable">parseMeta</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="variable">data</span>);
+    <span class="variable">data</span> = <span class="variable">meta</span>[<span class="number integer">1</span>];
+    <span class="variable">meta</span> = <span class="variable">meta</span>[<span class="number integer">0</span>];
+
+    <span class="comment">// Categories and tags are synonyms</span>
+    <span class="keyword">if</span> (!<span class="variable">meta</span>.<span class="variable">tags</span>) <span class="variable">meta</span>.<span class="variable">tags</span> = <span class="variable">meta</span>.<span class="variable">categories</span> ? <span class="variable">meta</span>.<span class="variable">categories</span> : [];
+
+    <span class="keyword">if</span> (<span class="variable">data</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">meta</span>) {
+      <span class="keyword">var</span> <span class="variable">fileDetails</span> = <span class="variable">self</span>.<span class="variable">parseFileName</span>(<span class="variable">file</span>.<span class="variable">name</span>);
+      <span class="variable">meta</span>.<span class="variable">fileName</span> = <span class="variable">fileDetails</span>.<span class="variable">fileName</span>;
+      <span class="variable">meta</span>.<span class="variable">url</span> = <span class="variable">fileDetails</span>.<span class="variable">fileName</span>;
+      <span class="variable">meta</span>.<span class="variable">date</span> = <span class="variable">fileDetails</span>.<span class="variable">date</span>;
+      <span class="variable">meta</span>.<span class="variable">content</span> = <span class="variable">formatter</span>(<span class="variable">self</span>.<span class="variable">applyFilters</span>(<span class="variable">data</span>));
+      <span class="variable">self</span>.<span class="variable">renderTemplate</span>(<span class="variable">meta</span>.<span class="variable">layout</span>, <span class="variable">meta</span>, <span class="variable">meta</span>.<span class="variable">content</span>);
+      <span class="variable">self</span>.<span class="variable">posts</span>.<span class="variable">push</span>(<span class="variable">meta</span>);
+
+      <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
+    }
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Adds a listener to the internal <code>EventEmitter</code> object.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  The event name</p></li><li><p><strong>param</strong>: <em>Function</em>  The handler</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">on</span> = <span class="keyword">function</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>) {
+  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>); 
+};
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">SiteBuilder</span>;
+</code></pre>
+</td>
+</tr>	</body>
+</html></tbody></table>
