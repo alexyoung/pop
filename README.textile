@@ -26,6 +26,7 @@ I've also been researching other static site generators.
 
 h3. TO-DO
 
+* auto-regenerate styles
 * Add styles for pagination to the default site and check it looks good
 * A simple site should be able to be generated without a config file using defaults
 * Useful/simple default site style to get people started
@@ -43,6 +44,7 @@ h3. Documentation TO-DO
 
 * User filters: replace all text, useful for custom filtering
 * User helpers: passed to Jade, get `site` as `this`
+* Post meta data: in particular "summaries" (which work with markdown/textile/helpers)
 * Document use as modules
 * Config file
 * Built-in templates

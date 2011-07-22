@@ -40,10 +40,10 @@ border-radius-top()
   border-top-left-radius: arguments
   border-top-right-radius: arguments
 
-emboss()
-  -moz-box-shadow: inset 0 0 2px #fff, 0 0 5px rgba(0, 0, 0, 0.5)
-  -webkit-box-shadow: inset 0 0 2px #fff, 0 0 5px rgba(0, 0, 0, 0.5) 
-  box-shadow: inner 0 0 2px #fff, 0 0 5px rgba(0, 0, 0, 0.5)
+shadow()
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5) 
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5)
 
 big-shadow()
   box-shadow: 0 0 15px #000
@@ -86,6 +86,12 @@ a
 a:hover
   text-decoration: none
 
+blockquote
+  reset()
+  font-style: italic
+  text-shadow: 0 1px 0 #fff
+  color: #333
+
 #header
   margin: 10px 0 20px 0
   padding-bottom: 10px
@@ -109,7 +115,7 @@ article
   background-color: light
   border-radius 5px
   border-color: light
-  emboss()
+  shadow()
 
 article header
   margin-bottom: 10px
@@ -117,15 +123,14 @@ article header
 article header h1
   border-top: 1px solid #bbb
   margin: 0 0 5px 0
-  padding: 10px 0 5px 10px
   font-size: header-font-size
 
 article header h1 a
   text-decoration: none
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5)
 
-article p
-  padding: 10px
+article h1, article h2, article h3, article h4, article h5, article h6, article p, article blockquote, article pre
+  padding: 10px 20px
 
 article time, article .author, article .tags
   display: inline
@@ -141,7 +146,7 @@ article time, article .author, article .tags
   color: dark
 
 article time
-  margin-left: 10px
+  margin-left: 20px
 
 .read-more
   lozenge()
@@ -178,6 +183,16 @@ nav.panel h2
   color: #fff
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5)
   padding: 3px 5px
+
+.prev_next
+  margin: 0 0 10px 0
+  clear: both
+  float: left
+
+.prev_next .page, .prev_next .next
+  padding: 3px 5px
+  margin: 5px
+  text-shadow: 0 1px 0 #fff
 
 footer
   clear: both
