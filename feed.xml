@@ -6,7 +6,7 @@
 
 &lt;p&gt;This includes &lt;a href="https://github.com/alexyoung/stextile"&gt;stextile&lt;/a&gt;, which is a rough-and-ready &lt;a href="http://www.textism.com/tools/textile/"&gt;Textile&lt;/a&gt; parser.  Pop also supports &lt;a href="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Pop sites use &lt;a href="http://jade-lang.com/"&gt;Jade&lt;/a&gt; and &lt;a href="http://learnboost.github.com/stylus/"&gt;Stylus&lt;/a&gt;.  These are CSS selector-based shorthands for quickly writing HTML and CSS.&lt;/p&gt;</content></entry><entry><title>Pop 0.0.2</title><link href="http://example.com//2011/07/22/pop-0"></link><updated>2011-07-22T00:07:00Z</updated><id>http://example.com/2011/07/22/pop-0</id><content type="html">&lt;p&gt;Pop version 0.0.2 has been released.  This version adds additional default styles to the site generator (blockquotes, pagination), and adds post summary support.&lt;/p&gt;
+&lt;p&gt;Pop sites use &lt;a href="http://jade-lang.com/"&gt;Jade&lt;/a&gt; and &lt;a href="http://learnboost.github.com/stylus/"&gt;Stylus&lt;/a&gt;.  These are CSS selector-based shorthands for quickly writing HTML and CSS.&lt;/p&gt;</content></entry><entry><title>Pop 0.0.2</title><link href="http://example.com//2011/07/22/pop-0.0.2"></link><updated>2011-07-22T00:07:00Z</updated><id>http://example.com/2011/07/22/pop-0.0.2</id><content type="html">&lt;p&gt;Pop version 0.0.2 has been released.  This version adds additional default styles to the site generator (blockquotes, pagination), and adds post summary support.&lt;/p&gt;
 
 &lt;p&gt;Writing YAML front-matter like this:&lt;/p&gt;
 
