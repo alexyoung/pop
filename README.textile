@@ -29,7 +29,6 @@ h3. TO-DO
 * auto-regenerate styles
 * Option to make built-in atom feed summarise posts
 * A simple site should be able to be generated without a config file using defaults
-* Useful/simple default site style to get people started
 * More post truncation helpers
 * Make it accept a command line param for a single file to generate, with an option to watch for changes (i.e., regenerate latest post + index.jade)
 * Make prettyprint css built in? alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
