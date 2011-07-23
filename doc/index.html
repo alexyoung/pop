@@ -205,10 +205,10 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="variable">defaultConfig</span>: <span class="keyword">function</span>() {
     <span class="keyword">return</span> <span class="string">''</span> 
-    + <span class="string">'{  &quot;url&quot;: &quot;http://example.com/&quot;\n'</span>
+    + <span class="string">'{  &quot;url&quot;: &quot;http://example.com&quot;\n'</span>
     + <span class="string">' , &quot;title&quot;: &quot;Example&quot;\n'</span>
     + <span class="string">' , &quot;permalink&quot;: &quot;/:year/:month/:day/:title&quot;\n'</span>
-    + <span class="string">' , &quot;paginate&quot;: 10\n'</span>
+    + <span class="string">' , &quot;perPage&quot;: 10\n'</span>
     + <span class="string">' , &quot;exclude&quot;: [&quot;\\\\.swp&quot;]\n'</span>
     + <span class="string">' , &quot;autoGenerate&quot;: [{&quot;feed&quot;: &quot;feed.xml&quot;}] }\n'</span>
   },</code></pre>
@@ -245,29 +245,7 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="variable">defaultLayout</span>: <span class="keyword">function</span>() {
-    <span class="keyword">return</span> <span class="string">''</span>
-    + <span class="string">'!!! 5\n'</span>
-    + <span class="string">'html(lang=&quot;en&quot;)\n'</span>
-    + <span class="string">'  head\n'</span>
-    + <span class="string">'    title #{site.config.title}\n'</span>
-    + <span class="string">'    link(href=&quot;/stylesheets/screen.css&quot;, media=&quot;screen&quot;, rel=&quot;stylesheet&quot;, type=&quot;text/css&quot;)\n'</span>
-    + <span class="string">'  body\n'</span>
-    + <span class="string">'    header#header\n'</span>
-    + <span class="string">'      hgroup\n'</span>
-    + <span class="string">'        h1 #{site.config.title}\n'</span>
-    + <span class="string">'        h2 I promise to write regularly!\n'</span>
-    + <span class="string">'    !{content}\n'</span>
-    + <span class="string">'    footer\n'</span>
-    + <span class="string">'      nav\n'</span>
-    + <span class="string">'        h1 Related Sites\n'</span>
-    + <span class="string">'        ul\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://popjs.com&quot;) Powered by Pop\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://dailyjs.com&quot;) Learn JavaScript\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://alexyoung.org&quot;) Designed by Alex R. Young\n'</span>
-    + <span class="string">'      p.copyright Content &copy; The Authors\n'</span>;
+    <span class="keyword">return</span> <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">__dirname</span> + <span class="string">'/assets/default.jade'</span>);
   },</code></pre>
 </td>
 </tr>
@@ -281,29 +259,7 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="variable">defaultPostLayout</span>: <span class="keyword">function</span>() {
-    <span class="keyword">return</span> <span class="string">''</span>
-    + <span class="string">'!!! 5\n'</span>
-    + <span class="string">'html(lang=&quot;en&quot;)\n'</span>
-    + <span class="string">'  head\n'</span>
-    + <span class="string">'    title #{post.title}\n'</span>
-    + <span class="string">'    link(href=&quot;/stylesheets/screen.css&quot;, media=&quot;screen&quot;, rel=&quot;stylesheet&quot;, type=&quot;text/css&quot;)\n'</span>
-    + <span class="string">'  body\n'</span>
-    + <span class="string">'    header#header\n'</span>
-    + <span class="string">'      hgroup\n'</span>
-    + <span class="string">'        h1 #{site.config.title}\n'</span>
-    + <span class="string">'        h2 I promise to write regularly!\n'</span>
-    + <span class="string">'    !{hNews(post)}\n'</span>
-    + <span class="string">'    footer\n'</span>
-    + <span class="string">'      nav\n'</span>
-    + <span class="string">'        h1 Related Sites\n'</span>
-    + <span class="string">'        ul\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://popjs.com&quot;) Powered by Pop\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://dailyjs.com&quot;) Learn JavaScript\n'</span>
-    + <span class="string">'          li\n'</span>
-    + <span class="string">'            a(href=&quot;http://alexyoung.org&quot;) Designed by Alex R. Young\n'</span>
-    + <span class="string">'      p.copyright Content &copy; The Authors\n'</span>;
+    <span class="keyword">return</span> <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">__dirname</span> + <span class="string">'/assets/post.jade'</span>);
   },</code></pre>
 </td>
 </tr>
@@ -398,6 +354,9 @@ code .this { color: #19469D; }</style>
     <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="variable">defaults</span>) {
       <span class="variable">config</span>[<span class="variable">key</span>] = <span class="variable">config</span>[<span class="variable">key</span>] || <span class="variable">defaults</span>[<span class="variable">key</span>];
     }
+
+    <span class="keyword">if</span> (<span class="variable">config</span>.<span class="variable">url</span>) <span class="variable">config</span>.<span class="variable">url</span> = <span class="variable">config</span>.<span class="variable">url</span>.<span class="variable">replace</span>(<span class="regexp">/\/</span>$/, <span class="string">''</span>);
+
     <span class="keyword">return</span> <span class="variable">config</span>;
   }
 
@@ -780,12 +739,15 @@ code .this { color: #19469D; }</style>
 
 <h2></h2>
 
-<ul><li><p><strong>param</strong>: <em>String</em>  Site URL</p></li><li><p><strong>param</strong>: <em>String</em>  Site title</p></li><li><p><strong>param</strong>: <em>String</em>  Feed URL</p></li><li><p><strong>param</strong>: <em>Integer</em>  Posts per page</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+<ul><li><p><strong>param</strong>: <em>String</em>  Feed URL</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
 </td>
 <td class="code">
-<pre><code><span class="variable">atom</span>: <span class="keyword">function</span>(<span class="variable">url</span>, <span class="variable">title</span>, <span class="variable">feed</span>, <span class="variable">perPage</span>) {
-    <span class="variable">perPage</span> = <span class="variable">perPage</span> || <span class="number integer">20</span>;
+<pre><code><span class="variable">atom</span>: <span class="keyword">function</span>(<span class="variable">feed</span>) {
     <span class="keyword">var</span> <span class="variable">template</span> = <span class="string">''</span>
+      , <span class="variable">url</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span>
+      , <span class="variable">title</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>
+      , <span class="variable">perPage</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">perPage</span>
+      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>).<span class="variable">reverse</span>()
       , <span class="variable">site</span> = <span class="this">this</span>;
 
     <span class="variable">perPage</span> = <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">perPage</span> ? <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> : <span class="variable">perPage</span>;
@@ -795,18 +757,18 @@ code .this { color: #19469D; }</style>
     <span class="variable">template</span> += <span class="string">'  title #{title}\n'</span>;
     <span class="variable">template</span> += <span class="string">'  link(href=feed, rel=&quot;self&quot;)\n'</span>;
     <span class="variable">template</span> += <span class="string">'  link(href=url)\n'</span>;
-    <span class="variable">template</span> += <span class="string">'  updated #{dx(site.posts[0].date)}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  updated #{dx(posts[0].date)}\n'</span>;
     <span class="variable">template</span> += <span class="string">'  id #{url}\n'</span>;
     <span class="variable">template</span> += <span class="string">'  author\n'</span>;
     <span class="variable">template</span> += <span class="string">'    name #{title}\n'</span>;
-    <span class="variable">template</span> += <span class="string">'  - for (var i = 0, post = site.posts[i]; i &lt; '</span> + <span class="variable">perPage</span> + <span class="string">'; i++, post = site.posts[i])\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  - for (var i = 0, post = posts[i]; i &lt; '</span> + <span class="variable">perPage</span> + <span class="string">'; i++, post = posts[i])\n'</span>;
     <span class="variable">template</span> += <span class="string">'    entry\n'</span>;
     <span class="variable">template</span> += <span class="string">'      title #{post.title}\n'</span>;
     <span class="variable">template</span> += <span class="string">'      link(href=url + post.url)\n'</span>;
     <span class="variable">template</span> += <span class="string">'      updated #{dx(post.date)}\n'</span>;
     <span class="variable">template</span> += <span class="string">'      id #{url.replace(/\\/$/, &quot;&quot;)}#{post.url}\n'</span>;
     <span class="variable">template</span> += <span class="string">'      content(type=&quot;html&quot;) !{h(post.content)}\n'</span>;
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>, <span class="variable">title</span>: <span class="variable">title</span>, <span class="variable">url</span>: <span class="variable">url</span>, <span class="variable">feed</span>: <span class="variable">feed</span> }) });
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>, <span class="variable">posts</span>: <span class="variable">posts</span>, <span class="variable">title</span>: <span class="variable">title</span>, <span class="variable">url</span>: <span class="variable">url</span>, <span class="variable">feed</span>: <span class="variable">feed</span> }) });
   },</code></pre>
 </td>
 </tr>
@@ -879,11 +841,20 @@ code .this { color: #19469D; }</style>
     <span class="variable">template</span> += <span class="string">'    h1.entry-title\n'</span>;
     <span class="variable">template</span> += <span class="string">'      a(href=post.url) !{post.title}\n'</span>;
     <span class="variable">template</span> += <span class="string">'    time.updated(datetime=dx(post.date), pubdate) #{ds(post.date)}\n'</span>;
-    <span class="variable">template</span> += <span class="string">'    p.byline.author.vcard by &lt;span class=&quot;fn&quot;&gt;#{post.author}&lt;/span&gt;\n'</span>;
+    <span class="keyword">if</span> (<span class="variable">post</span>.<span class="variable">author</span>)
+      <span class="variable">template</span> += <span class="string">'    p.byline.author.vcard by &lt;span class=&quot;fn&quot;&gt;#{post.author}&lt;/span&gt;\n'</span>;
 
     <span class="keyword">if</span> (<span class="variable">post</span>.<span class="variable">tags</span>) <span class="variable">template</span> += <span class="string">'    div.tags !{tags(post.tags)}\n'</span>;
-    <span class="variable">template</span> += <span class="variable">summary</span> ? <span class="string">'  !{truncateParagraphs(post.content, 2, &quot;&lt;p&gt;&lt;a class=\\&quot;read-more\\&quot; href=\\&quot;'</span> + <span class="variable">post</span>.<span class="variable">url</span> + <span class="string">'\\&quot;&gt;Read More &rarr;&lt;/a&gt;&lt;/p&gt;&quot;)}\n'</span> : <span class="string">'  !{post.content}\n'</span>;
 
+    <span class="keyword">if</span> (<span class="variable">summary</span>) {
+      <span class="keyword">if</span> (<span class="variable">post</span>.<span class="variable">summary</span>) {
+        <span class="variable">template</span> += <span class="string">'  !{post.summary + &quot;&lt;p&gt;&lt;a class=\\&quot;read-more\\&quot; href=\\&quot;'</span> + <span class="variable">post</span>.<span class="variable">url</span> + <span class="string">'\\&quot;&gt;Read More &rarr;&lt;/a&gt;&lt;/p&gt;&quot;}\n'</span>;
+      } <span class="keyword">else</span> {
+        <span class="variable">template</span> += <span class="string">'  !{truncateParagraphs(post.content, 2, &quot;&lt;p&gt;&lt;a class=\\&quot;read-more\\&quot; href=\\&quot;'</span> + <span class="variable">post</span>.<span class="variable">url</span> + <span class="string">'\\&quot;&gt;Read More &rarr;&lt;/a&gt;&lt;/p&gt;&quot;)}\n'</span>;
+      }
+    } <span class="keyword">else</span> {
+      <span class="variable">template</span> += <span class="string">'  !{post.content}\n'</span>;
+    }
     <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="this">this</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span> }) });
   },</code></pre>
 </td>
@@ -1110,6 +1081,8 @@ code .this { color: #19469D; }</style>
 }
 
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (<span class="variable">args</span>.<span class="variable">length</span> === <span class="number integer">0</span>) <span class="keyword">return</span> <span class="variable">loadConfigAndGenerateSite</span>();
+
   <span class="keyword">while</span> (<span class="variable">args</span>.<span class="variable">length</span>) {
     <span class="variable">arg</span> = <span class="variable">args</span>.<span class="variable">shift</span>();
     <span class="keyword">switch</span> (<span class="variable">arg</span>) {
@@ -1423,7 +1396,7 @@ are currently available.</p>
     <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
       <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'ERROR: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
-      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + &quot;'</span>, <span class="string">'&quot; + this.config.title + &quot;'</span>, <span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
+      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
       <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
       <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">feed</span>), <span class="variable">html</span>);
       <span class="variable">fn</span>();
@@ -1585,8 +1558,9 @@ are currently available.</p>
 
   <span class="keyword">try</span> {
     <span class="keyword">if</span> (<span class="variable">dataChunks</span>[<span class="number integer">1</span>]) {
+      <span class="comment">// TODO: Improve YAML extraction, add JSON alternative</span>
       <span class="variable">parsedYAML</span> = <span class="variable">clean</span>(<span class="variable">yamlish</span>.<span class="variable">decode</span>(<span class="variable">fix</span>(<span class="variable">dataChunks</span>[<span class="number integer">1</span>] || <span class="variable">data</span>)));
-      <span class="keyword">return</span> [<span class="variable">parsedYAML</span>, (<span class="variable">dataChunks</span>[<span class="number integer">2</span>] || <span class="string">''</span>).<span class="variable">trim</span>()];
+      <span class="keyword">return</span> [<span class="variable">parsedYAML</span>, ((<span class="variable">dataChunks</span> || []).<span class="variable">slice</span>(<span class="number integer">2</span>).<span class="variable">join</span>(<span class="string">'---'</span>)).<span class="variable">trim</span>()];
     } <span class="keyword">else</span> {
       <span class="keyword">return</span> [<span class="string">''</span>, <span class="variable">data</span>];
     }
@@ -1827,13 +1801,13 @@ are currently available.</p>
 <td class="code">
 <pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">parseFileName</span> = <span class="keyword">function</span>(<span class="variable">fileName</span>) {
   <span class="keyword">var</span> <span class="variable">format</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">permalink</span>
-    , <span class="variable">parts</span> = <span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/(\d+)-(\d+)-(\d+)-([^.]+)/</span>)
+    , <span class="variable">parts</span> = <span class="variable">fileName</span>.<span class="variable">match</span>(<span class="regexp">/(\d+)-(\d+)-(\d+)-(.*)/</span>)
     , <span class="variable">year</span> = <span class="variable">parts</span>[<span class="number integer">1</span>]
     , <span class="variable">month</span> = <span class="variable">parts</span>[<span class="number integer">2</span>]
     , <span class="variable">day</span> = <span class="variable">parts</span>[<span class="number integer">3</span>]
-    , <span class="variable">title</span> = <span class="variable">parts</span>[<span class="number integer">4</span>];
+    , <span class="variable">title</span> = <span class="variable">parts</span>[<span class="number integer">4</span>].<span class="variable">replace</span>(<span class="regexp">/\.(textile|md)/</span>, <span class="string">''</span>);
 
-  <span class="keyword">return</span> { <span class="variable">date</span>:  <span class="keyword">new</span> <span class="class">Date</span>(<span class="variable">year</span>, <span class="variable">month</span>, <span class="variable">day</span>),
+  <span class="keyword">return</span> { <span class="variable">date</span>:  <span class="keyword">new</span> <span class="class">Date</span>(<span class="variable">year</span>, <span class="variable">month</span> - <span class="number integer">1</span>, <span class="variable">day</span>),
            <span class="variable">fileName</span>: <span class="variable">format</span>.<span class="variable">replace</span>(<span class="string">':year'</span>, <span class="variable">year</span>).
                        <span class="variable">replace</span>(<span class="string">':month'</span>, <span class="variable">month</span>).
                        <span class="variable">replace</span>(<span class="string">':day'</span>, <span class="variable">day</span>).
@@ -1896,6 +1870,10 @@ are currently available.</p>
       <span class="variable">meta</span>.<span class="variable">url</span> = <span class="variable">fileDetails</span>.<span class="variable">fileName</span>;
       <span class="variable">meta</span>.<span class="variable">date</span> = <span class="variable">fileDetails</span>.<span class="variable">date</span>;
       <span class="variable">meta</span>.<span class="variable">content</span> = <span class="variable">formatter</span>(<span class="variable">self</span>.<span class="variable">applyFilters</span>(<span class="variable">data</span>));
+
+      <span class="keyword">if</span> (<span class="variable">meta</span>.<span class="variable">summary</span>)
+        <span class="variable">meta</span>.<span class="variable">summary</span> = <span class="variable">formatter</span>(<span class="variable">self</span>.<span class="variable">applyFilters</span>(<span class="variable">meta</span>.<span class="variable">summary</span>));
+
       <span class="variable">self</span>.<span class="variable">renderTemplate</span>(<span class="variable">meta</span>.<span class="variable">layout</span>, <span class="variable">meta</span>, <span class="variable">meta</span>.<span class="variable">content</span>);
       <span class="variable">self</span>.<span class="variable">posts</span>.<span class="variable">push</span>(<span class="variable">meta</span>);
 
