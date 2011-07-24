@@ -2,6 +2,7 @@ var assert = require('assert')
   , path = require('path')
   , fs = require('fs')
   , pop = require(__dirname + '/../lib/pop')
+  , SiteBuilder = require(__dirname + '/../lib/site_builder')
   , config;
 
 config = {
@@ -20,4 +21,11 @@ exports['test SiteBuilder generates a simple site correctly'] = function(beforeE
     var html = fs.readFileSync(config.output + '/index.html', 'utf8');
     assert.match(html, /Welcome to my site/);
   });
+};
+
+exports['test isRenderedFile'] = function() {
+  var siteBuilder = new SiteBuilder(config);
+
+  assert.ok(siteBuilder.isRenderedFile({ type: 'file jade' }));
+  assert.ok(!siteBuilder.isRenderedFile({ type: 'file' }));
 };
