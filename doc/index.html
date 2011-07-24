@@ -364,8 +364,13 @@ code .this { color: #19469D; }</style>
     <span class="keyword">var</span> <span class="variable">data</span> = <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">file</span>).<span class="variable">toString</span>();
     <span class="keyword">return</span> <span class="variable">applyDefaults</span>(<span class="class">JSON</span>.<span class="variable">parse</span>(<span class="variable">data</span>));
   } <span class="keyword">catch</span>(<span class="variable">exception</span>) {
-    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading config:'</span>, <span class="variable">exception</span>.<span class="variable">message</span>);
-    <span class="keyword">throw</span>(<span class="variable">exception</span>);
+    <span class="keyword">if</span> (<span class="variable">exception</span>.<span class="variable">code</span> === <span class="string">'EBADF'</span>) {
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'No _config.json file in this directory.  Is this a Pop site?'</span>);
+      <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
+    } <span class="keyword">else</span> {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading config:'</span>, <span class="variable">exception</span>.<span class="variable">message</span>);
+      <span class="keyword">throw</span>(<span class="variable">exception</span>);
+    }
   }
 }</code></pre>
 </td>
@@ -1168,15 +1173,21 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="keyword">function</span> <span class="variable">watchChanges</span>() {
-  <span class="comment">// TODO: What happens when files are added?</span>
-  <span class="comment">// TODO: Other directories?</span>
-  <span class="variable">watch</span>
-    .<span class="variable">add</span>(<span class="variable">siteBuilder</span>.<span class="variable">root</span>)
-    .<span class="variable">add</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">siteBuilder</span>.<span class="variable">root</span>, <span class="string">'_posts'</span>))
-    .<span class="variable">onChange</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'File changed:'</span>, <span class="variable">file</span>);
+  <span class="keyword">function</span> <span class="variable">buildChange</span>(<span class="variable">file</span>) {
+    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'File changed:'</span>, <span class="variable">file</span>);
+    <span class="keyword">try</span> {
       <span class="variable">siteBuilder</span>.<span class="variable">buildChange</span>(<span class="variable">file</span>);
-    });
+    } <span class="keyword">catch</span> (<span class="variable">e</span>) {
+      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error building site:'</span>, <span class="variable">e</span>);
+    }
+  }
+
+  <span class="comment">// TODO: What happens when files/dirs are added?</span>
+  <span class="variable">siteBuilder</span>.<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+    <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'dir'</span>) {
+      <span class="variable">watch</span>.<span class="variable">add</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">onChange</span>(<span class="variable">buildChange</span>);
+    }
+  });
 }
 
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="keyword">function</span>(<span class="variable">s</span>) {
@@ -1407,6 +1418,20 @@ are currently available.</p>
 </tr>
 <tr class="code">
 <td class="docs">
+<p>Determines if a file needs Jade or Stylus rendering.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  An instance that has a <code>type</code> property</p></li><li><p><strong>return</strong>: <em>Boolean</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">isRenderedFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>) {
+  <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file jade'</span> || <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file styl'</span>;
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
 <p>Builds a single file.
 ## TODO Work in progress.</p>
 
@@ -1425,7 +1450,7 @@ are currently available.</p>
 
   <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span>.<span class="variable">indexOf</span>(<span class="string">'post'</span>) !== -<span class="number integer">1</span>) {
     <span class="this">this</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>);
-  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file jade'</span>) {
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">isRenderedFile</span>(<span class="variable">file</span>)) {
     <span class="this">this</span>.<span class="variable">renderFile</span>(<span class="variable">file</span>);
   } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file'</span>) {
     <span class="this">this</span>.<span class="variable">copyStatic</span>(<span class="variable">file</span>);
@@ -1459,8 +1484,9 @@ are currently available.</p>
 </td>
 <td class="code">
 <pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">otherRenderedFiles</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
   <span class="keyword">return</span> <span class="this">this</span>.<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">filter</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-    <span class="keyword">return</span> <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file jade'</span> || <span class="variable">file</span>.<span class="variable">type</span> === <span class="string">'file styl'</span>;
+    <span class="keyword">return</span> <span class="variable">self</span>.<span class="variable">isRenderedFile</span>(<span class="variable">file</span>);
   });
 };</code></pre>
 </td>
