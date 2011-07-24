@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-23T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.3</title><link href="http://popjs.com/2011/07/23/pop-0.0.3"></link><updated>2011-07-23T00:07:00Z</updated><id>http://popjs.com/2011/07/23/pop-0.0.3</id><content type="html">&lt;p&gt;Pop version 0.0.3 is out.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-24T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.4</title><link href="http://popjs.com/2011/07/24/pop-0.0.4"></link><updated>2011-07-24T00:07:00Z</updated><id>http://popjs.com/2011/07/24/pop-0.0.4</id><content type="html">&lt;p&gt;Pop 0.0.4 is out:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; will generate a site in the current directory and exit&lt;/li&gt;
+&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; on a path that doesn't look like a Pop site will print an error rather than a confusing stack trace&lt;/li&gt;
+&lt;li&gt;Pop server mode will watch all subdirectories for changes, so things like stylesheets (including Stylus files) will automatically regenerate the changed file&lt;/li&gt;
+&lt;/ul&gt;</content></entry><entry><title>Pop 0.0.3</title><link href="http://popjs.com/2011/07/23/pop-0.0.3"></link><updated>2011-07-23T00:07:00Z</updated><id>http://popjs.com/2011/07/23/pop-0.0.3</id><content type="html">&lt;p&gt;Pop version 0.0.3 is out.&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Atom feed helper takes less options (the variables are all in &lt;code&gt;config&lt;/code&gt;)&lt;/li&gt;
