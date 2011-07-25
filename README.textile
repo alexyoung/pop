@@ -20,46 +20,7 @@ h3. Documentation
 * "Plugins":http://popjs.com/2011/07/25/pop-0.0.5/
 * "API":http://popjs.com/doc/
 
-h3. Influences
+h3. Plugins
 
-"Jekyll":https://github.com/mojombo/jekyll was a huge influence, particularly because I've written hundreds of posts for that platform.
-
-I've also been researching other static site generators.
-
-* "jekyll":https://github.com/mojombo/jekyll
-* "mksite":https://github.com/cosmonaut/mksite
-* "hyde":http://hyde.github.com/
-
-h3. TO-DO
-
-* Option to make built-in atom feed summarise posts
-* A simple site should be able to be generated without a config file using defaults
-* More post truncation helpers
-* Make it accept a command line param for a single file to generate, with an option to watch for changes (i.e., regenerate latest post + index.jade)
-* Make prettyprint css built in? Alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
-* rss helper
-* nib (to make it easier to share styles?)
-* Mock filesystem for tests so I don't need to write to /tmp
-* Shared logging so I can turn it off during tests
-* Make template language configurable, default to jade
-* If enough people get confused about manually installing Express, I'll make it a dependency for the optional dev server mode
-* Autogenerate new files, generate index pages when posts change
-
-h3. Plugins: WANTED
-
-* prettyprint
-* google analytics
-
-h3. Documentation TO-DO
-
-* Plugins
-* User filters and post filters: replace all text, useful for custom filtering
-* User helpers: passed to Jade, get `site` as `this`
-* Post meta data: in particular "summaries" (which work with markdown/textile/helpers)
-* Document use as modules
-* Config file
-* Built-in templates
-* Helpers
-* hNews
-* Jade/Stylus
+* "pop-disqus":https://github.com/alexyoung/pop-disqus
 
