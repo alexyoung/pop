@@ -39,9 +39,15 @@ h3. TO-DO
 * If enough people get confused about manually installing Express, I'll make it a dependency for the optional dev server mode
 * Autogenerate new files, generate index pages when posts change
 
+h3. Plugins: WANTED
+
+* prettyprint
+* google analytics
+
 h3. Documentation TO-DO
 
-* User filters: replace all text, useful for custom filtering
+* Plugins
+* User filters and post filters: replace all text, useful for custom filtering
 * User helpers: passed to Jade, get `site` as `this`
 * Post meta data: in particular "summaries" (which work with markdown/textile/helpers)
 * Document use as modules

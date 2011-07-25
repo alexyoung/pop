@@ -1013,7 +1013,7 @@ code .this { color: #19469D; }</style>
   , <span class="variable">readConfig</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>)
   , <span class="variable">usage</span>
   , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>)
-  , <span class="variable">version</span> = <span class="string">'0.0.1'</span>;
+  , <span class="variable">version</span> = <span class="string">'0.0.4'</span>;
 
 <span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
 <span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
@@ -1219,7 +1219,8 @@ code .this { color: #19469D; }</style>
   , <span class="variable">filters</span> = <span class="variable">require</span>(<span class="string">'./filters'</span>)
   , <span class="variable">helpers</span> = <span class="variable">require</span>(<span class="string">'./helpers'</span>)
   , <span class="variable">userHelpers</span> = {}
-  , <span class="variable">userFilters</span> = {};</code></pre>
+  , <span class="variable">userFilters</span> = {}
+  , <span class="variable">userPostFilters</span> = {};</code></pre>
 </td>
 </tr>
 <tr class="code">
@@ -1245,6 +1246,11 @@ code .this { color: #19469D; }</style>
     <span class="variable">userFilters</span> = <span class="variable">require</span>(<span class="variable">filterFile</span>);
   }
 
+  <span class="keyword">var</span> <span class="variable">postFilterFile</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_lib'</span>, <span class="string">'post-filters.js'</span>);
+  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">postFilterFile</span>)) {
+    <span class="variable">userPostFilters</span> = <span class="variable">require</span>(<span class="variable">postFilterFile</span>);
+  }
+
   <span class="comment">// TODO Make this configurable</span>
   <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">config</span>.<span class="variable">output</span> || <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_site'</span>);
   <span class="this">this</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
@@ -1252,7 +1258,60 @@ code .this { color: #19469D; }</style>
   <span class="this">this</span>.<span class="variable">helpers</span> = <span class="variable">helpers</span>;
   <span class="this">this</span>.<span class="variable">events</span> = <span class="keyword">new</span> <span class="class">EventEmitter</span>();
   <span class="this">this</span>.<span class="variable">includes</span> = {};
+
+  <span class="this">this</span>.<span class="variable">loadPlugins</span>();
 }</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Loads Pop plugins based on <code>config.require</code>.
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">loadPlugins</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">require</span>) <span class="keyword">return</span>;
+  <span class="keyword">var</span> <span class="variable">self</span> = <span class="this">this</span>;
+
+  <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">require</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">name</span>) {
+    <span class="keyword">try</span> {
+      <span class="keyword">var</span> <span class="variable">plugin</span> = <span class="variable">require</span>(<span class="variable">name</span>);
+      <span class="variable">self</span>.<span class="variable">loadPlugin</span>(<span class="variable">name</span>, <span class="variable">plugin</span>);
+    } <span class="keyword">catch</span> (<span class="variable">e</span>) {
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Unable to load plugin:'</span>, <span class="variable">name</span>, <span class="string">'-'</span>, <span class="variable">e</span>.<span class="variable">message</span>);
+      <span class="keyword">throw</span>(<span class="variable">e</span>);
+    }
+  });
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Applies helpers and "user helpers" to an object so it can be easily passed to Jade.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  The name of the plugin</p></li><li><p><strong>param</strong>: <em>Object</em>  The plugin's module.  Properties loaded: <code>helpers</code>, <code>filters</code>, <code>postFilters</code></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">loadPlugin</span> = <span class="keyword">function</span>(<span class="variable">name</span>, <span class="variable">plugin</span>) {
+  <span class="keyword">if</span> (!<span class="variable">plugin</span>) <span class="keyword">return</span>;
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">plugin</span>.<span class="variable">helpers</span>) {
+    <span class="keyword">if</span> (<span class="variable">plugin</span>.<span class="variable">helpers</span>.<span class="variable">hasOwnProperty</span>(<span class="variable">key</span>))
+      <span class="variable">userHelpers</span>[<span class="variable">key</span>] = <span class="this">this</span>.<span class="variable">bind</span>(<span class="variable">plugin</span>.<span class="variable">helpers</span>[<span class="variable">key</span>]);
+  }
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">plugin</span>.<span class="variable">filters</span>) {
+    <span class="keyword">if</span> (<span class="variable">plugin</span>.<span class="variable">filters</span>.<span class="variable">hasOwnProperty</span>(<span class="variable">key</span>))
+      <span class="variable">userFilters</span>[<span class="variable">key</span>] = <span class="this">this</span>.<span class="variable">bind</span>(<span class="variable">plugin</span>.<span class="variable">filters</span>[<span class="variable">key</span>]);
+  }
+
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">plugin</span>.<span class="variable">postFilters</span>) {
+    <span class="keyword">if</span> (<span class="variable">plugin</span>.<span class="variable">postFilters</span>.<span class="variable">hasOwnProperty</span>(<span class="variable">key</span>))
+      <span class="variable">userPostFilters</span>[<span class="variable">key</span>] = <span class="this">this</span>.<span class="variable">bind</span>(<span class="variable">plugin</span>.<span class="variable">postFilters</span>[<span class="variable">key</span>]);
+  }
+};</code></pre>
 </td>
 </tr>
 <tr class="code">
@@ -1522,7 +1581,7 @@ are currently available.</p>
     , <span class="variable">self</span> = <span class="this">this</span>;
 
   <span class="comment">// TODO: Use a configurable ignore list</span>
-  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">match</span>(<span class="regexp">/^_/</span>)) <span class="keyword">return</span> <span class="variable">fn</span>();
+  <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">match</span>(<span class="regexp">/^_/</span>)) <span class="keyword">return</span> <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
 
   <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">outDir</span>, <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
     <span class="keyword">if</span> (<span class="variable">err</span>) {
@@ -1610,6 +1669,9 @@ are currently available.</p>
     <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'No content for:'</span>, <span class="variable">fileName</span>);
     <span class="keyword">return</span>;
   }
+
+  <span class="comment">// Apply the post-filters before writing</span>
+  <span class="variable">content</span> = <span class="this">this</span>.<span class="variable">applyPostFilters</span>(<span class="variable">content</span>);
 
   <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>), <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
     <span class="keyword">if</span> (<span class="variable">err</span>) {
@@ -1865,6 +1927,24 @@ are currently available.</p>
 </tr>
 <tr class="code">
 <td class="docs">
+<p>Applies user-supplied content post-filters.  These are run after HTML is generated.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to transform using filters</p></li><li><p><strong>return</strong>: <em>String</em>  The transformed text</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">applyPostFilters</span> = <span class="keyword">function</span>(<span class="variable">text</span>) {
+  <span class="keyword">for</span> (<span class="variable">key</span> <span class="keyword">in</span> <span class="variable">userPostFilters</span>) {
+    <span class="variable">text</span> = <span class="variable">userPostFilters</span>[<span class="variable">key</span>].<span class="variable">apply</span>(<span class="this">this</span>, [<span class="variable">text</span>]);
+  }
+
+  <span class="keyword">return</span> <span class="variable">text</span>;
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
 <p>Renders a post.</p>
 
 <h2></h2>
@@ -1902,9 +1982,9 @@ are currently available.</p>
 
       <span class="variable">self</span>.<span class="variable">renderTemplate</span>(<span class="variable">meta</span>.<span class="variable">layout</span>, <span class="variable">meta</span>, <span class="variable">meta</span>.<span class="variable">content</span>);
       <span class="variable">self</span>.<span class="variable">posts</span>.<span class="variable">push</span>(<span class="variable">meta</span>);
-
-      <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
     }
+
+    <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
   });
 };</code></pre>
 </td>
