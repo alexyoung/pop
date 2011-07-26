@@ -83,6 +83,16 @@ exports['test truncateParagraphs'] = function() {
   assert.equal(t, '<p>A</p><p>A</p>MORE!');
 };
 
+exports['test truncate'] = function() {
+  var t = helpers.truncate('The needs of the many outweigh the needs of the few.', 10, '...');
+  assert.equal(t, 'The needs...');
+};
+
+exports['test truncateWords'] = function() {
+  var t = helpers.truncateWords('The needs of the many outweigh the needs of the few.', 5, '...');
+  assert.equal(t, 'The needs of the many...');
+};
+
 exports['test paginatedPosts'] = function() {
   siteBuilder.paginator = new Paginator(config.perPage, siteBuilder.posts)
   var html = helpers.paginatedPosts.apply(siteBuilder, []);

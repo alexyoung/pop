@@ -1,7 +1,5 @@
 h3. Features
 
-* Option to make built-in atom feed summarise posts
-* More post truncation helpers
 * Make it accept a command line param for a single file to generate, with an option to watch for changes (i.e., regenerate latest post + index.jade)
 * Make prettyprint css built in? Alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
 * rss helper
