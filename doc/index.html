@@ -118,7 +118,8 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">yamlish</span> = <span class="variable">require</span>(<span class="string">'yamlish'</span>)
   , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
-  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>);
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>)
+  , <span class="variable">generators</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/generators'</span>);
 
 <span class="variable">module</span>.<span class="variable">exports</span> = {</code></pre>
 </td>
@@ -185,7 +186,7 @@ code .this { color: #19469D; }</style>
 
     <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">config</span>.<span class="variable">root</span>, <span class="variable">fileName</span>), <span class="variable">frontMatter</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
       <span class="keyword">if</span> (<span class="variable">err</span>) {
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
         <span class="keyword">throw</span>(<span class="variable">err</span>);
       }
       <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Post created:'</span>, <span class="variable">fileName</span>);
@@ -288,7 +289,7 @@ code .this { color: #19469D; }</style>
 </tr>
 <tr class="code">
 <td class="docs">
-<p>Sample post, to get people started.</p>
+<p>Built-in stylesheet.</p>
 
 <h2></h2>
 
@@ -309,28 +310,29 @@ code .this { color: #19469D; }</style>
 <ul><li><p><strong>param</strong>: <em>String</em>  Site path name</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback to run when finished</p></li></ul>
 </td>
 <td class="code">
-<pre><code><span class="variable">makeSite</span>: <span class="keyword">function</span>(<span class="variable">pathName</span>, <span class="variable">fn</span>) {
-    <span class="keyword">if</span> (<span class="variable">path</span>.<span class="variable">existsSync</span>(<span class="variable">pathName</span>)) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error: Path already exists'</span>);
-      <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
+<pre><code><span class="variable">makeSite</span>: <span class="keyword">function</span>(<span class="variable">args</span>, <span class="variable">fn</span>) {
+    <span class="keyword">var</span> <span class="variable">pathName</span>
+      , <span class="variable">generator</span>;
+
+    <span class="keyword">if</span> (<span class="variable">args</span>.<span class="variable">length</span> === <span class="number integer">1</span>) {
+      <span class="variable">pathName</span> = <span class="variable">args</span>[<span class="number integer">0</span>];
+      <span class="variable">generator</span> = <span class="string">'default'</span>;
     } <span class="keyword">else</span> {
-      <span class="keyword">var</span> <span class="variable">paths</span> = [<span class="string">'_posts'</span>, <span class="string">'_lib'</span>, <span class="string">'_layouts'</span>, <span class="string">'_includes'</span>, <span class="string">'stylesheets'</span>]
-        , <span class="variable">postFileName</span> = <span class="this">this</span>.<span class="variable">getPostFileName</span>(<span class="string">'/:year/:month/:day/:title'</span>, <span class="keyword">new</span> <span class="class">Date</span>(), <span class="string">'Example Post About Something'</span>, <span class="string">'md'</span>);
+      <span class="variable">pathName</span> = <span class="variable">args</span>[<span class="number integer">1</span>];
+      <span class="variable">generator</span> = <span class="variable">args</span>[<span class="number integer">0</span>];
+    }
 
-      <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">pathName</span>, <span class="number integer">0777</span>);
-      <span class="variable">paths</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">p</span>) {
-        <span class="variable">fs</span>.<span class="variable">mkdirSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">p</span>), <span class="number integer">0777</span>);
-      });
+    <span class="keyword">if</span> (<span class="variable">generators</span>.<span class="variable">hasOwnProperty</span>(<span class="variable">generator</span>)) {
+      <span class="variable">generators</span>[<span class="variable">generator</span>].<span class="variable">run</span>(<span class="this">this</span>, <span class="variable">pathName</span>, <span class="variable">fn</span>);
+    } <span class="keyword">else</span> {
+      <span class="keyword">try</span> {
+        <span class="keyword">var</span> <span class="variable">pluginGenerator</span> = <span class="variable">require</span>(<span class="variable">generator</span>);
+      } <span class="keyword">catch</span> (<span class="variable">e</span>) {
+        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Unable to find the'</span>, <span class="variable">generator</span>, <span class="string">'generator'</span>);
+        <span class="keyword">return</span>;
+      }
 
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_config.json'</span>), <span class="this">this</span>.<span class="variable">defaultConfig</span>());
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'index.jade'</span>), <span class="this">this</span>.<span class="variable">defaultIndex</span>());
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'default.jade'</span>), <span class="this">this</span>.<span class="variable">defaultLayout</span>());
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'_layouts'</span>, <span class="string">'post.jade'</span>), <span class="this">this</span>.<span class="variable">defaultPostLayout</span>());
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="string">'stylesheets'</span>, <span class="string">'screen.styl'</span>), <span class="this">this</span>.<span class="variable">defaultStylus</span>());
-      <span class="variable">fs</span>.<span class="variable">writeFileSync</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">pathName</span>, <span class="variable">postFileName</span>), <span class="this">this</span>.<span class="variable">samplePost</span>());
-
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Site created:'</span>, <span class="variable">pathName</span>);
-      <span class="variable">fn</span>();
+      <span class="variable">pluginGenerator</span>.<span class="variable">generator</span>.<span class="variable">run</span>(<span class="this">this</span>, <span class="variable">pathName</span>, <span class="variable">fn</span>);
     }
   },</code></pre>
 </td>
@@ -376,7 +378,8 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">function</span> <span class="variable">readConfigFile</span>(<span class="variable">file</span>) {
   <span class="keyword">var</span> <span class="variable">defaults</span> = {
-    <span class="variable">perPage</span>: <span class="number integer">20</span> 
+    <span class="variable">perPage</span>: <span class="number integer">20</span>
+  , <span class="variable">output</span>: <span class="string">'_site/'</span>
   };
 
   <span class="keyword">function</span> <span class="variable">applyDefaults</span>(<span class="variable">config</span>) {
@@ -410,8 +413,7 @@ code .this { color: #19469D; }</style>
  </p>
 </td>
 <td class="code">
-<pre><code><span class="keyword">var</span> <span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>()
-  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
+<pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>);
 
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">readConfigFile</span>;
 </code></pre>
@@ -608,6 +610,15 @@ code .this { color: #19469D; }</style>
     data = data.replace(/{% endhighlight %}/g, '&lt;/pre&gt;');
     return data;
   }
+};</p>
+</td>
+<td class="code">
+
+</td>
+</tr><tr class="filename"><td><h2 id="lib/generators.js"><a href="#">generators</a></h2></td><td>lib/generators.js</td></tr><tr class="code">
+<td class="docs">
+<p>module.exports = {
+  'default': require(__dirname + '/generators/default')
 };</p>
 </td>
 <td class="code">
@@ -1186,10 +1197,10 @@ code .this { color: #19469D; }</style>
         <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">true</span>);
       <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'post'</span>:
-        <span class="variable">cliTools</span>.<span class="variable">makePost</span>(<span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
+        <span class="keyword">return</span> <span class="variable">cliTools</span>.<span class="variable">makePost</span>(<span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
       <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'new'</span>:
-        <span class="variable">cliTools</span>.<span class="variable">makeSite</span>(<span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
+        <span class="keyword">return</span> <span class="variable">cliTools</span>.<span class="variable">makeSite</span>(<span class="variable">args</span>, <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
       <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'render'</span>:
         <span class="keyword">return</span> <span class="variable">cliTools</span>.<span class="variable">renderFile</span>(<span class="variable">module</span>.<span class="variable">exports</span>, <span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>());
@@ -1346,8 +1357,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">userPostFilters</span> = <span class="variable">require</span>(<span class="variable">postFilterFile</span>);
   }
 
-  <span class="comment">// TODO Make this configurable</span>
-  <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">config</span>.<span class="variable">output</span> || <span class="variable">path</span>.<span class="variable">join</span>(<span class="this">this</span>.<span class="variable">root</span>, <span class="string">'_site'</span>);
+  <span class="this">this</span>.<span class="variable">outputRoot</span> = <span class="variable">config</span>.<span class="variable">output</span>;
   <span class="this">this</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
   <span class="this">this</span>.<span class="variable">posts</span> = [];
   <span class="this">this</span>.<span class="variable">helpers</span> = <span class="variable">helpers</span>;
@@ -1491,18 +1501,26 @@ and events are used to track progress.</p>
       }
     }
 
+    <span class="keyword">function</span> <span class="variable">renderAutoGen</span>() {
+      <span class="variable">autoGen</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
+        <span class="variable">self</span>.<span class="variable">autoGenerateFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+          <span class="variable">filesLeft</span>--;
+          <span class="variable">checkFinished</span>();
+        });
+      });
+    }
+
+    <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span> === <span class="number integer">0</span>) {
+      <span class="variable">renderAutoGen</span>();
+    }
+
     <span class="variable">posts</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
       <span class="variable">self</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
         <span class="variable">filesLeft</span>--;
         <span class="variable">postsLeft</span>--;
         <span class="variable">checkFinished</span>();
         <span class="keyword">if</span> (<span class="variable">postsLeft</span> === <span class="number integer">0</span>) {
-          <span class="variable">autoGen</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-            <span class="variable">self</span>.<span class="variable">autoGenerateFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
-              <span class="variable">filesLeft</span>--;
-              <span class="variable">checkFinished</span>();
-            });
-          });
+          <span class="variable">renderAutoGen</span>();
         }
       });
     });
@@ -1559,7 +1577,7 @@ are currently available.</p>
 
   <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">feed</span>) {
     <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
-      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'ERROR: Built-in feed generation requires config values for: url and title.'</span>); 
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
       <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
       <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
@@ -1909,6 +1927,7 @@ are currently available.</p>
       <span class="variable">stylus</span>.<span class="variable">render</span>(<span class="variable">fileData</span>, { <span class="variable">filename</span>: <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">outFileName</span>) }, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">css</span>) {
         <span class="keyword">if</span> (<span class="variable">err</span>) <span class="keyword">throw</span> <span class="variable">err</span>;
         <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">css</span>);
+        <span class="keyword">if</span> (<span class="variable">fn</span>) <span class="variable">fn</span>.<span class="variable">apply</span>(<span class="variable">self</span>);
       });
     });
   }
