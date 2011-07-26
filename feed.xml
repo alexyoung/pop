@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-25T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.5</title><link href="http://popjs.com/2011/07/25/pop-0.0.5"></link><updated>2011-07-25T00:07:00Z</updated><id>http://popjs.com/2011/07/25/pop-0.0.5</id><content type="html">&lt;p&gt;Pop 0.0.5 has been released.  This version introduces a plugin architecture and post-filters.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-26T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.6</title><link href="http://popjs.com/2011/07/26/pop-0.0.6"></link><updated>2011-07-26T00:07:00Z</updated><id>http://popjs.com/2011/07/26/pop-0.0.6</id><content type="html">&lt;p&gt;Pop 0.0.6 adds the following features and enhancements:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A new command-line option, &lt;code&gt;render&lt;/code&gt;, makes Pop only render files that match a pattern&lt;/li&gt;
+&lt;li&gt;Character and word truncation helpers have been added&lt;/li&gt;
+&lt;li&gt;The Atom feed can now summarise posts based on paragraph length&lt;/li&gt;
+&lt;/ul&gt;</content></entry><entry><title>Pop 0.0.5</title><link href="http://popjs.com/2011/07/25/pop-0.0.5"></link><updated>2011-07-25T00:07:00Z</updated><id>http://popjs.com/2011/07/25/pop-0.0.5</id><content type="html">&lt;p&gt;Pop 0.0.5 has been released.  This version introduces a plugin architecture and post-filters.&lt;/p&gt;
 
 &lt;h2&gt;Post-Filters&lt;/h2&gt;
 
