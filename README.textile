@@ -21,6 +21,22 @@ h3. Documentation
 * "Plugins":http://popjs.com/2011/07/25/pop-0.0.5/
 * "API":http://popjs.com/doc/
 
+h3. Configuration File Options
+
+Must be valid JSON.
+
+{% highlight javascript %}
+{  "url": "http://popjs.com/"                   // Your site's URL
+ , "title": "Pop Blog"                          // The title of your site
+ , "permalink": "/:year/:month/:day/:title"     // Post link format
+ , "paginate": 10                               // Number of posts to include on a page
+ , "exclude": ["\\.swp"]                        // Files to exclude
+ , "require": ["pop-disqus"]                    // Plugins
+ , "output": "_site/"                           // The place to put the generated HTML
+ , "autoGenerate": [{"feed": "feed.xml"}]       // Files to autogenerate using Pop's built-in pages
+}
+{% endhighlight %}
+
 h3. Plugins
 
 * "pop-disqus":https://github.com/alexyoung/pop-disqus
