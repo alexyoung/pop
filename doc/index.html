@@ -332,6 +332,35 @@ code .this { color: #19469D; }</style>
       <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Site created:'</span>, <span class="variable">pathName</span>);
       <span class="variable">fn</span>();
     }
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Renders files that match <code>pattern</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  Site config</p></li><li><p><strong>param</strong>: <em>String</em>  File name pattern</p></li><li><p><strong>param</strong>: <em>Function</em>  Callback</p><p></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">renderFile</span>: <span class="keyword">function</span>(<span class="variable">pop</span>, <span class="variable">config</span>, <span class="variable">pattern</span>) {
+    <span class="keyword">var</span> <span class="variable">fileMap</span> = <span class="keyword">new</span> <span class="variable">pop</span>.<span class="class">FileMap</span>(<span class="variable">config</span>)
+      , <span class="variable">siteBuilder</span> = <span class="keyword">new</span> <span class="variable">pop</span>.<span class="class">SiteBuilder</span>(<span class="variable">config</span>);
+    
+    <span class="variable">fileMap</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
+      <span class="keyword">if</span> (<span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">length</span> === <span class="number integer">0</span>) {
+        <span class="variable">fn</span>();
+      } <span class="keyword">else</span> {
+        <span class="variable">siteBuilder</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
+        <span class="variable">siteBuilder</span>.<span class="variable">build</span>();
+        <span class="variable">siteBuilder</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
+          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'%d files rendered.'</span>, <span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">length</span>);
+        });
+      }
+    });
+
+    <span class="variable">fileMap</span>.<span class="variable">search</span>(<span class="variable">pattern</span>);
   }
 };
 </code></pre>
@@ -491,6 +520,21 @@ code .this { color: #19469D; }</style>
 </tr>
 <tr class="code">
 <td class="docs">
+<p>Searches for files that match <code>pattern</code>.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  A pattern to search for</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">search</span> = <span class="keyword">function</span>(<span class="variable">pattern</span>) {
+  <span class="this">this</span>.<span class="variable">searchPattern</span> = <span class="variable">pattern</span>;
+  <span class="this">this</span>.<span class="variable">walk</span>();
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
 <p>Checks to see if a file name matches the excluded patterns.</p>
 
 <h2></h2>
@@ -519,6 +563,7 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="class">FileMap</span>.<span class="variable">prototype</span>.<span class="variable">addFile</span> = <span class="keyword">function</span>(<span class="variable">file</span>, <span class="variable">type</span>) {
   <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">isExcludedFile</span>(<span class="variable">file</span>)) <span class="keyword">return</span>;
+  <span class="keyword">if</span> (<span class="this">this</span>.<span class="variable">searchPattern</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; !<span class="variable">file</span>.<span class="variable">match</span>(<span class="this">this</span>.<span class="variable">searchPattern</span>)) <span class="keyword">return</span>;
 
   <span class="this">this</span>.<span class="variable">files</span>.<span class="variable">push</span>({
     <span class="variable">name</span>: <span class="variable">file</span>,
@@ -948,6 +993,35 @@ code .this { color: #19469D; }</style>
 <pre><code><span class="variable">truncateParagraphs</span>: <span class="keyword">function</span>(<span class="variable">text</span>, <span class="variable">length</span>, <span class="variable">moreText</span>) {
     <span class="keyword">var</span> <span class="variable">t</span> = <span class="variable">text</span>.<span class="variable">split</span>(<span class="string">'&lt;/p&gt;'</span>);
     <span class="keyword">return</span> <span class="variable">t</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">length</span> ? <span class="variable">text</span> : <span class="variable">t</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">join</span>(<span class="string">'&lt;/p&gt;'</span>) + <span class="string">'&lt;/p&gt;'</span> + <span class="variable">moreText</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Truncates based on characters (not HTML safe, use with pre-formatted text).</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to truncate</p></li><li><p><strong>param</strong>: <em>Integer</em>  Length</p></li><li><p><strong>param</strong>: <em>String</em>  Text to append when truncated</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">truncate</span>: <span class="keyword">function</span>(<span class="variable">text</span>, <span class="variable">length</span>, <span class="variable">moreText</span>) {
+    <span class="keyword">return</span> <span class="variable">text</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="variable">length</span> ? <span class="variable">text</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">trim</span>() + <span class="variable">moreText</span> : <span class="variable">text</span>;
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Truncates based on words (not HTML safe, use with pre-formatted text).</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Text to truncate</p></li><li><p><strong>param</strong>: <em>Integer</em>  Number of words</p></li><li><p><strong>param</strong>: <em>String</em>  Text to append when truncated</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">truncateWords</span>: <span class="keyword">function</span>(<span class="variable">text</span>, <span class="variable">length</span>, <span class="variable">moreText</span>) {
+    <span class="keyword">var</span> <span class="variable">t</span> = <span class="variable">text</span>.<span class="variable">split</span>(<span class="regexp">/\s/</span>);
+    <span class="keyword">return</span> <span class="variable">t</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="variable">length</span> ? <span class="variable">t</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">length</span>).<span class="variable">join</span>(<span class="string">' '</span>) + <span class="variable">moreText</span> : <span class="variable">text</span>;
   }
 };
 
@@ -1023,18 +1097,19 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/../lib/graceful'</span>)
   , <span class="class">FileMap</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/file_map'</span>)
   , <span class="class">SiteBuilder</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/site_builder'</span>)
   , <span class="variable">cliTools</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/cli_tools'</span>)
   , <span class="variable">readConfig</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>)
   , <span class="variable">usage</span>
-  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>)
-  , <span class="variable">version</span> = <span class="string">'0.0.4'</span>;
+  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>);
 
 <span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
 <span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
 <span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
 <span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
+<span class="variable">usage</span> += <span class="string">'render pattern        Renders files that match &quot;pattern&quot;\n'</span>; 
 <span class="variable">usage</span> += <span class="string">'server                Create a server on port 4000 for _site/\n\n'</span>;
 <span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
 <span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;</code></pre>
@@ -1116,8 +1191,12 @@ code .this { color: #19469D; }</style>
       <span class="keyword">case</span> <span class="string">'new'</span>:
         <span class="variable">cliTools</span>.<span class="variable">makeSite</span>(<span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
       <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'render'</span>:
+        <span class="keyword">return</span> <span class="variable">cliTools</span>.<span class="variable">renderFile</span>(<span class="variable">module</span>.<span class="variable">exports</span>, <span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>());
+      <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'-v'</span>:
       <span class="keyword">case</span> <span class="string">'--version'</span>:
+        <span class="keyword">var</span> <span class="variable">version</span> = <span class="class">JSON</span>.<span class="variable">parse</span>(<span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">__dirname</span> + <span class="string">'/../package.json'</span>)).<span class="variable">version</span>;
         <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'pop version:'</span>, <span class="variable">version</span>);
         <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>);
       <span class="keyword">break</span>;
@@ -1480,7 +1559,7 @@ are currently available.</p>
 
   <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">feed</span>) {
     <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'ERROR: Built-in feed generation requires config values for: url and title.'</span>); 
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'ERROR: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
       <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
       <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
@@ -1601,19 +1680,19 @@ are currently available.</p>
 
   <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">outDir</span>, <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
     <span class="keyword">if</span> (<span class="variable">err</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">outDir</span>);
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">outDir</span>);
       <span class="keyword">throw</span>(<span class="variable">err</span>);
     }
 
     <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">file</span>.<span class="variable">name</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
       <span class="keyword">if</span> (<span class="variable">err</span>) {
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading file:'</span>, <span class="variable">file</span>.<span class="variable">name</span>);
+        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error reading file:'</span>, <span class="variable">file</span>.<span class="variable">name</span>);
         <span class="keyword">throw</span>(<span class="variable">err</span>);
       }
 
       <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">fileName</span>, <span class="variable">data</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
         <span class="keyword">if</span> (<span class="variable">err</span>) {
-          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+          <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
           <span class="keyword">throw</span>(<span class="variable">err</span>);
         }
 
@@ -1666,7 +1745,7 @@ are currently available.</p>
       <span class="keyword">return</span> [<span class="string">''</span>, <span class="variable">data</span>];
     }
   } <span class="keyword">catch</span> (<span class="variable">e</span>) {
-    <span class="variable">console</span>.<span class="variable">log</span>(&<span class="variable">quot</span>;<span class="class">Couldn</span><span class="string">'t parse YAML in:&quot;, file, '</span>:', <span class="variable">e</span>);
+    <span class="variable">console</span>.<span class="variable">error</span>(&<span class="variable">quot</span>;<span class="class">Couldn</span><span class="string">'t parse YAML in:&quot;, file, '</span>:', <span class="variable">e</span>);
   }
 };</code></pre>
 </td>
@@ -1681,23 +1760,20 @@ are currently available.</p>
 </td>
 <td class="code">
 <pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">write</span> = <span class="keyword">function</span>(<span class="variable">fileName</span>, <span class="variable">content</span>) {
-  <span class="keyword">if</span> (!<span class="variable">content</span>) {
-    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'No content for:'</span>, <span class="variable">fileName</span>);
-    <span class="keyword">return</span>;
-  }
+  <span class="keyword">if</span> (!<span class="variable">content</span>) <span class="keyword">return</span> <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'No content for:'</span>, <span class="variable">fileName</span>);
 
   <span class="comment">// Apply the post-filters before writing</span>
   <span class="variable">content</span> = <span class="this">this</span>.<span class="variable">applyPostFilters</span>(<span class="variable">content</span>);
 
   <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>), <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
     <span class="keyword">if</span> (<span class="variable">err</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>));
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error creating directory:'</span>, <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>));
       <span class="keyword">throw</span>(<span class="variable">err</span>);
     }
 
     <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">fileName</span>, <span class="variable">content</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
       <span class="keyword">if</span> (<span class="variable">err</span>) {
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
         <span class="keyword">throw</span>(<span class="variable">err</span>);
       }
     });
@@ -1779,9 +1855,9 @@ are currently available.</p>
 
   <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">templateFile</span>, <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
     <span class="keyword">if</span> (<span class="variable">err</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error in: '</span> + <span class="variable">templateFile</span>);
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">err</span>);
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">err</span>.<span class="variable">message</span>);
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error in: '</span> + <span class="variable">templateFile</span>);
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="variable">err</span>);
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="variable">err</span>.<span class="variable">message</span>);
       <span class="keyword">throw</span>(<span class="variable">err</span>);
     }
 
@@ -1790,7 +1866,7 @@ are currently available.</p>
         , <span class="variable">fileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(<span class="variable">post</span>.<span class="variable">fileName</span>, <span class="string">'index.html'</span>)
         , <span class="variable">dirName</span> = <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>);
     } <span class="keyword">catch</span> (<span class="variable">e</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error rendering:'</span>, <span class="variable">templateFile</span>);
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error rendering:'</span>, <span class="variable">templateFile</span>);
       <span class="keyword">throw</span>(<span class="variable">e</span>);
     }
 
@@ -1800,7 +1876,7 @@ are currently available.</p>
       } <span class="keyword">else</span> {
         <span class="variable">fs</span>.<span class="variable">mkdir_p</span>(<span class="variable">dirName</span>, <span class="number integer">0777</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
           <span class="keyword">if</span> (<span class="variable">err</span>) {
-            <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error making directory:'</span>, <span class="variable">dirName</span>);
+            <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error making directory:'</span>, <span class="variable">dirName</span>);
             <span class="keyword">throw</span>(<span class="variable">err</span>);
           }
           <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">fileName</span>, <span class="variable">html</span>);
@@ -1874,7 +1950,7 @@ are currently available.</p>
     } <span class="keyword">else</span> {
       <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">'_layouts'</span>, <span class="variable">meta</span>.<span class="variable">layout</span> + <span class="string">'.jade'</span>), <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">layoutData</span>) {
         <span class="keyword">if</span> (<span class="variable">err</span>) {
-          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Unable to read layout:'</span>, <span class="variable">meta</span>.<span class="variable">layout</span> + <span class="string">'.jade'</span>);
+          <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Unable to read layout:'</span>, <span class="variable">meta</span>.<span class="variable">layout</span> + <span class="string">'.jade'</span>);
           <span class="keyword">throw</span>(<span class="variable">err</span>);
         }
 
