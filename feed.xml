@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-26T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.6</title><link href="http://popjs.com/2011/07/26/pop-0.0.6"></link><updated>2011-07-26T00:07:00Z</updated><id>http://popjs.com/2011/07/26/pop-0.0.6</id><content type="html">&lt;p&gt;Pop 0.0.6 adds the following features and enhancements:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" ?><feed xmlns="http://www.w3.org/2005/Atom"><title>Pop Blog</title><link href="http://popjs.comfeed.xml" rel="self"></link><link href="http://popjs.com"></link><updated>2011-07-27T00:07:00Z</updated><id>http://popjs.com</id><author><name>Pop Blog</name></author><entry><title>Pop 0.0.7</title><link href="http://popjs.com/2011/07/27/pop-0.0.7"></link><updated>2011-07-27T00:07:00Z</updated><id>http://popjs.com/2011/07/27/pop-0.0.7</id><content type="html">&lt;p&gt;Pop 0.0.7 is out:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Added generators&lt;/li&gt;
+&lt;li&gt;Plugins can add their own generators through &lt;code&gt;myPlugin.generators&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SiteBuilder&lt;/code&gt; should trigger the server properly&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Using Generators&lt;/h2&gt;
+
+&lt;p&gt;Generating a site with Pop generally works like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pop new new_site
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Generators can now be used to generate different kinds of sites:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pop new pop-gallery new_site
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example requires &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Writing Generators&lt;/h2&gt;
+
+&lt;p&gt;Basic usage is to make a CommonJS module with a &lt;code&gt;generator&lt;/code&gt; property:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;module.exports = {
+  generator: {
+    run: function(helpers, pathName) {
+    }
+  }
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The parameters will be passed by Pop.  The &lt;code&gt;helpers&lt;/code&gt; value contains the internal cli_tools.js module, and &lt;code&gt;pathName&lt;/code&gt; is the destination path for the site.&lt;/p&gt;
+
+&lt;p&gt;A full example is available here: &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;</content></entry><entry><title>Pop 0.0.6</title><link href="http://popjs.com/2011/07/26/pop-0.0.6"></link><updated>2011-07-26T00:07:00Z</updated><id>http://popjs.com/2011/07/26/pop-0.0.6</id><content type="html">&lt;p&gt;Pop 0.0.6 adds the following features and enhancements:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;A new command-line option, &lt;code&gt;render&lt;/code&gt;, makes Pop only render files that match a pattern&lt;/li&gt;

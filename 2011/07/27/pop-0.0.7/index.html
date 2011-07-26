@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><title>Pop 0.0.7</title><link href="/stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css"></head><body><header id="header"><hgroup><h1><a href="/">Pop Blog</a></h1></hgroup><hgroup><a href="http://github.com/alexyoung/pop"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+</hgroup></header><nav id="breadcrumb"><a href="/" class="read-more">&larr; Back</a></nav><article class="hentry"><header><h1 class="entry-title"><a href="/2011/07/27/pop-0.0.7">Pop 0.0.7</a></h1><time datetime="2011-07-27T00:07:00Z" pubdate="pubdate" class="updated">27 July 2011</time><div class="tags"><a href="/tags.html#releases">releases</a></div></header><p>Pop 0.0.7 is out:</p>
+
+<ul>
+<li>Added generators</li>
+<li>Plugins can add their own generators through <code>myPlugin.generators</code></li>
+<li><code>SiteBuilder</code> should trigger the server properly</li>
+</ul>
+
+<h2>Using Generators</h2>
+
+<p>Generating a site with Pop generally works like this:</p>
+
+<pre><code>pop new new_site
+</code></pre>
+
+<p>Generators can now be used to generate different kinds of sites:</p>
+
+<pre><code>pop new pop-gallery new_site
+</code></pre>
+
+<p>This example requires <a href="https://github.com/alexyoung/pop-gallery">pop-gallery</a>.</p>
+
+<h2>Writing Generators</h2>
+
+<p>Basic usage is to make a CommonJS module with a <code>generator</code> property:</p>
+
+<pre><code>module.exports = {
+  generator: {
+    run: function(helpers, pathName) {
+    }
+  }
+};
+</code></pre>
+
+<p>The parameters will be passed by Pop.  The <code>helpers</code> value contains the internal cli_tools.js module, and <code>pathName</code> is the destination path for the site.</p>
+
+<p>A full example is available here: <a href="https://github.com/alexyoung/pop-gallery">pop-gallery</a>.</p>
+</article>
+<script type="text/javascript">var disqus_developer = 0;</script><script type="text/javascript">var disqus_shortname = 'popjs';(function () {var s = document.createElement('script'); s.async = true;s.src = 'http://disqus.com/forums/popjs/count.js';(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);}());</script><div id="disqus_thread"></div><script type="text/javascript">    var disqus_url = 'http://popjs.com/2011/07/27/pop-0.0.7/';    (function() {        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);    })();</script><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<footer><p class="copyright">Content &copy; Alex R. Young</p></footer></body></html>
