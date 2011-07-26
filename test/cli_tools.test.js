@@ -46,3 +46,10 @@ exports['test makeSite'] = function(beforeExit) {
     assert.ok(path.existsSync(fileName + '/_layouts/default.jade'));
   });
 };
+
+exports['test renderFile'] = function(beforeExit) {
+  var c = {
+    root: __dirname + '/fixtures/test_site/'
+  };
+  cliTools.renderFile(pop, c, 'md');
+}
