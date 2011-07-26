@@ -19,6 +19,7 @@ h3. Documentation
 
 * "An introduction and tutorial":http://alexyoung.org/2011/07/24/pop/
 * "Plugins":http://popjs.com/2011/07/25/pop-0.0.5/
+* "Generators":http://popjs.com/2011/07/27/pop-0.0.7/
 * "API":http://popjs.com/doc/
 
 h3. Configuration File Options
@@ -40,4 +41,5 @@ Must be valid JSON.
 h3. Plugins
 
 * "pop-disqus":https://github.com/alexyoung/pop-disqus
+* "pop-gallery":https://github.com/alexyoung/pop-gallery
 
