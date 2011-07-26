@@ -1,8 +1,6 @@
 h3. Features
 
-* Separate out config.root and config.output -- root is used to refer to the site's source
-* Formalise "generators"
-* Make plugins able to add generators
+* Port option in config
 * Make prettyprint css built in? Alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
 * rss helper
 * nib (to make it easier to share styles?)
