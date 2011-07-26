@@ -25,7 +25,7 @@ h3. Configuration File Options
 
 Must be valid JSON.
 
-{% highlight javascript %}
+<pre>
 {  "url": "http://popjs.com/"                   // Your site's URL
  , "title": "Pop Blog"                          // The title of your site
  , "permalink": "/:year/:month/:day/:title"     // Post link format
@@ -35,7 +35,7 @@ Must be valid JSON.
  , "output": "_site/"                           // The place to put the generated HTML
  , "autoGenerate": [{"feed": "feed.xml"}]       // Files to autogenerate using Pop's built-in pages
 }
-{% endhighlight %}
+</pre>
 
 h3. Plugins
 
