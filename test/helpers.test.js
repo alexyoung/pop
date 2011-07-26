@@ -47,8 +47,14 @@ exports['test pagination template generation'] = function() {
 
 exports['test atom feed generation'] = function() {
   var paginator = new Paginator(config.perPage, siteBuilder.posts)
-    , xml = helpers.atom.apply(siteBuilder, [config.url, config.title, 'feed.xml', paginator.perPage]);
+    , xml = helpers.atom.apply(siteBuilder, [config.url]);
 
+  assert.match(xml, /<content type="html">Example document content<\/content>/);
+};
+
+exports['test truncated atom feed generation'] = function() {
+  var paginator = new Paginator(config.perPage, siteBuilder.posts)
+    , xml = helpers.atom.apply(siteBuilder, [config.url, true]);
   assert.match(xml, /<content type="html">Example document content<\/content>/);
 };
 

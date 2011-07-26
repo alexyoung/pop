@@ -5,6 +5,7 @@ Pop is a static site builder for Node, optimised for blogs; based on "Jekyll":ht
 * Designed to be a workhorse for large production blogs
 * Useful built-in helpers: hNews post generation, pagination, tags
 * Extend using your own helpers and pre-filters
+* Plugins
 
 h3. Installation
 

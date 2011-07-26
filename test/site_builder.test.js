@@ -12,6 +12,8 @@ config = {
 , root: path.join(__dirname, 'fixtures', 'test_site')
 , output: path.join('/tmp', 'pop-tests', (new Date).getTime().toString() + '-site-builder')
 , autoGenerate: [{'feed': 'feed.xml'}] // Should be ignored with 0 posts
+, url: 'http://example.com/'
+, title: 'My Site'
 };
 
 exports['test SiteBuilder generates a simple site correctly'] = function(beforeExit) {
