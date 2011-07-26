@@ -9,6 +9,7 @@ h3. Features
 * Make template language configurable, default to jade
 * If enough people get confused about manually installing Express, I'll make it a dependency for the optional dev server mode
 * Autogenerate new files, generate index pages when posts change
+* Make it possible to generate sites with relative URLs fairly easily (I want to generate things for directories on dropbox)
 
 h3. Documentation
 
