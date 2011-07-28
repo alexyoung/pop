@@ -58,6 +58,13 @@ exports['test truncated atom feed generation'] = function() {
   assert.match(xml, /<content type="html">Example document content<\/content>/);
 };
 
+exports['test RSS feed generation'] = function() {
+  var paginator = new Paginator(config.perPage, siteBuilder.posts)
+    , xml = helpers.rss.apply(siteBuilder, [config.url]);
+
+  assert.match(xml, /<description>Example document content<\/description>/);
+};
+
 exports['test allTags'] = function() {
   var tags = helpers.allTags.apply(siteBuilder, []);
   assert.deepEqual(['a', 'b', 'c'], tags);

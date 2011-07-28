@@ -1,6 +1,5 @@
 h3. Features
 
-* rss helper
 * nib (to make it easier to share styles?)
 * Mock filesystem for tests so I don't need to write to /tmp
 * Shared logging so I can turn it off during tests
