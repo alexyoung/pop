@@ -211,7 +211,7 @@ code .this { color: #19469D; }</style>
     + <span class="string">' , &quot;permalink&quot;: &quot;/:year/:month/:day/:title&quot;\n'</span>
     + <span class="string">' , &quot;perPage&quot;: 10\n'</span>
     + <span class="string">' , &quot;exclude&quot;: [&quot;\\\\.swp&quot;]\n'</span>
-    + <span class="string">' , &quot;autoGenerate&quot;: [{&quot;feed&quot;: &quot;feed.xml&quot;}] }\n'</span>
+    + <span class="string">' , &quot;autoGenerate&quot;: [{&quot;feed&quot;: &quot;feed.xml&quot;, &quot;rss&quot;: &quot;feed.rss&quot;}] }\n'</span>
   },</code></pre>
 </td>
 </tr>
@@ -379,6 +379,7 @@ code .this { color: #19469D; }</style>
 <pre><code><span class="keyword">function</span> <span class="variable">readConfigFile</span>(<span class="variable">file</span>) {
   <span class="keyword">var</span> <span class="variable">defaults</span> = {
     <span class="variable">perPage</span>: <span class="number integer">20</span>
+  , <span class="variable">port</span>: <span class="number integer">4000</span>
   , <span class="variable">output</span>: <span class="string">'_site/'</span>
   };
 
@@ -851,6 +852,66 @@ code .this { color: #19469D; }</style>
 </tr>
 <tr class="code">
 <td class="docs">
+<p>RSS Jade template.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  Feed URL</p></li><li><p><strong>param</strong>: <em>Integer</em>  Number of paragraphs to summarise</p></li><li><p><strong>param</strong>: <em>String</em>  Optional description</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">rss</span>: <span class="keyword">function</span>(<span class="variable">feed</span>, <span class="variable">summarise</span>, <span class="variable">description</span>) {
+    <span class="keyword">var</span> <span class="variable">template</span> = <span class="string">''</span>
+      , <span class="variable">url</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span>
+      , <span class="variable">title</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>
+      , <span class="variable">perPage</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">perPage</span>
+      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>).<span class="variable">reverse</span>()
+      , <span class="variable">site</span> = <span class="this">this</span>;
+
+    <span class="variable">description</span> = <span class="variable">description</span> || <span class="variable">title</span>;
+    <span class="variable">summarise</span> = <span class="keyword">typeof</span> <span class="variable">summarise</span> === <span class="string">'boolean'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">summarise</span> ? <span class="number integer">3</span> : <span class="variable">summarise</span>;
+    <span class="variable">perPage</span> = <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> &<span class="variable">lt</span>; <span class="variable">perPage</span> ? <span class="variable">site</span>.<span class="variable">posts</span>.<span class="variable">length</span> : <span class="variable">perPage</span>;
+
+    <span class="variable">template</span> += <span class="string">'!!!xml\n'</span>;
+    <span class="variable">template</span> += <span class="string">'rss(version=&quot;2.0&quot;)\n'</span>;
+    <span class="variable">template</span> += <span class="string">'  channel\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    title #{title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    link #{url}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    description #{description}\n'</span>;
+
+    <span class="comment">// TODO: Site description, language, managingEditor, webMaster</span>
+
+    <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="number integer">0</span>) {
+      <span class="variable">template</span> += <span class="string">'    pubDate #{d822(posts[0].date)}\n'</span>;
+      <span class="variable">template</span> += <span class="string">'    lastBuildDate #{d822(posts[0].date)}\n'</span>;
+    }
+
+    <span class="variable">template</span> += <span class="string">'    generator Pop\n'</span>;
+    <span class="variable">template</span> += <span class="string">'    - for (var i = 0, post = posts[i]; i &lt; '</span> + <span class="variable">perPage</span> + <span class="string">'; i++, post = posts[i])\n'</span>;
+    <span class="variable">template</span> += <span class="string">'      item\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        title #{post.title}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        link #{url + post.url}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        pubDate #{d822(post.date)}\n'</span>;
+    <span class="variable">template</span> += <span class="string">'        guid #{url.replace(/\\/$/, &quot;&quot;)}#{post.url}\n'</span>;
+
+    <span class="keyword">if</span> (<span class="variable">summarise</span>)
+      <span class="variable">template</span> += <span class="string">'        description !{h(truncateParagraphs(post.content, summarise, &quot;&quot;))}\n'</span>;
+    <span class="keyword">else</span>
+      <span class="variable">template</span> += <span class="string">'        description !{h(post.content)}\n'</span>;
+
+    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({
+        <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>
+      , <span class="variable">posts</span>: <span class="variable">posts</span>
+      , <span class="variable">title</span>: <span class="variable">title</span>
+      , <span class="variable">url</span>: <span class="variable">url</span>
+      , <span class="variable">feed</span>: <span class="variable">feed</span>
+      , <span class="variable">description</span>: <span class="variable">description</span>
+      , <span class="variable">summarise</span>: <span class="variable">summarise</span>
+    })});
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
 <p>Returns unique sorted tags for every post.</p>
 
 <h2></h2>
@@ -975,6 +1036,21 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="variable">dx</span>: <span class="keyword">function</span>(<span class="variable">date</span>) {
     <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">df</span>(<span class="variable">date</span>, <span class="string">'YYYY-MM-DDTHH:MM:ssZ'</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>RFC-822 dates.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Date</em>  Date to format</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">d822</span>: <span class="keyword">function</span>(<span class="variable">date</span>) {
+    <span class="comment">// FIXME: why is _date always setting the timezone to local?</span>
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">df</span>(<span class="variable">date</span>, <span class="string">'ddd, DD MMM YYYY HH:MM:ss'</span>) + <span class="string">' GMT'</span>;
   },</code></pre>
 </td>
 </tr>
@@ -1121,7 +1197,7 @@ code .this { color: #19469D; }</style>
 <span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
 <span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
 <span class="variable">usage</span> += <span class="string">'render pattern        Renders files that match &quot;pattern&quot;\n'</span>; 
-<span class="variable">usage</span> += <span class="string">'server                Create a server on port 4000 for _site/\n\n'</span>;
+<span class="variable">usage</span> += <span class="string">'server [port]          Create a server on port (default: 4000) for _site/\n\n'</span>;
 <span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
 <span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;</code></pre>
 </td>
@@ -1152,8 +1228,10 @@ code .this { color: #19469D; }</style>
 <ul><li><p><strong>params</strong>: <em>Boolean</em>  Use a HTTP sever?</p></li></ul>
 </td>
 <td class="code">
-<pre><code><span class="keyword">function</span> <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">useServer</span>) {
-  <span class="variable">generateSite</span>(<span class="variable">loadConfig</span>(), <span class="variable">useServer</span>);
+<pre><code><span class="keyword">function</span> <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">useServer</span>, <span class="variable">port</span>) {
+  <span class="keyword">var</span> <span class="variable">config</span> = <span class="variable">loadConfig</span>();
+  <span class="keyword">if</span> (<span class="variable">port</span>) <span class="variable">config</span>.<span class="variable">port</span> = <span class="variable">port</span>;
+  <span class="variable">generateSite</span>(<span class="variable">config</span>, <span class="variable">useServer</span>);
 }</code></pre>
 </td>
 </tr>
@@ -1194,7 +1272,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">arg</span> = <span class="variable">args</span>.<span class="variable">shift</span>();
     <span class="keyword">switch</span> (<span class="variable">arg</span>) {
       <span class="keyword">case</span> <span class="string">'server'</span>:
-        <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">true</span>);
+        <span class="variable">loadConfigAndGenerateSite</span>(<span class="variable">true</span>, <span class="variable">args</span>.<span class="variable">shift</span>());
       <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'post'</span>:
         <span class="keyword">return</span> <span class="variable">cliTools</span>.<span class="variable">makePost</span>(<span class="variable">loadConfig</span>(), <span class="variable">args</span>.<span class="variable">shift</span>(), <span class="keyword">function</span>() { <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>); });
@@ -1266,8 +1344,8 @@ code .this { color: #19469D; }</style>
   });
 
   <span class="comment">// TODO: Config</span>
-  <span class="variable">app</span>.<span class="variable">listen</span>(<span class="number integer">4000</span>);
-  <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Listening on port 4000'</span>);
+  <span class="variable">app</span>.<span class="variable">listen</span>(<span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
+  <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Listening on port'</span>, <span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
 }</code></pre>
 </td>
 </tr>
@@ -1563,7 +1641,7 @@ or an empty array.</p>
 </tr>
 <tr class="code">
 <td class="docs">
-<p>Generates a built-in page.  Only atom feeds
+<p>Generates a built-in page.  Only atom feeds and RSS
 are currently available.</p>
 
 <h2></h2>
@@ -1579,9 +1657,20 @@ are currently available.</p>
     <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
       <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
-      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;;
-      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
+      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + '</span>/<span class="string">' + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;
+        , <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
       <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">feed</span>), <span class="variable">html</span>);
+      <span class="variable">fn</span>();
+    }
+  }
+  
+  <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">rss</span>) {
+    <span class="keyword">if</span> (!<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span> || !<span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>) {
+      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Built-in feed generation requires config values for: url and title.'</span>); 
+    } <span class="keyword">else</span> {
+      <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">rss</span>(<span class="string">'&quot; + this.config.url + '</span>/<span class="string">' + file.rss + &quot;'</span>)}&<span class="variable">quot</span>;
+        , <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
+      <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">rss</span>), <span class="variable">html</span>);
       <span class="variable">fn</span>();
     }
   }
@@ -2006,7 +2095,7 @@ are currently available.</p>
     , <span class="variable">day</span> = <span class="variable">parts</span>[<span class="number integer">3</span>]
     , <span class="variable">title</span> = <span class="variable">parts</span>[<span class="number integer">4</span>].<span class="variable">replace</span>(<span class="regexp">/\.(textile|md)/</span>, <span class="string">''</span>);
 
-  <span class="keyword">return</span> { <span class="variable">date</span>:  <span class="keyword">new</span> <span class="class">Date</span>(<span class="variable">year</span>, <span class="variable">month</span> - <span class="number integer">1</span>, <span class="variable">day</span>),
+  <span class="keyword">return</span> { <span class="variable">date</span>: <span class="keyword">new</span> <span class="class">Date</span>(<span class="class">Date</span>.<span class="class">UTC</span>(<span class="variable">year</span>, <span class="variable">month</span> - <span class="number integer">1</span>, <span class="variable">day</span>)),
            <span class="variable">fileName</span>: <span class="variable">format</span>.<span class="variable">replace</span>(<span class="string">':year'</span>, <span class="variable">year</span>).
                        <span class="variable">replace</span>(<span class="string">':month'</span>, <span class="variable">month</span>).
                        <span class="variable">replace</span>(<span class="string">':day'</span>, <span class="variable">day</span>).

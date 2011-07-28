@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><title>Pop 0.0.8</title><link href="/stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css"><link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="/feed.rss"><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml"></head><body><header id="header"><hgroup><h1><a href="/">Pop Blog</a></h1></hgroup><hgroup><a href="http://github.com/alexyoung/pop"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+</hgroup></header><nav id="breadcrumb"><a href="/" class="read-more">&larr; Back</a></nav><article class="hentry"><header><h1 class="entry-title"><a href="/2011/07/28/pop-0.0.8">Pop 0.0.8</a></h1><time datetime="2011-07-28T01:07:00Z" pubdate="pubdate" class="updated">28 July 2011</time><p class="byline author vcard">by <span class="fn">Pop</span></p><div class="tags"><a href="/tags.html#releases">releases</a></div></header><p>I've just released Pop 0.0.8, which adds:</p>
+
+<ul>
+<li>An option to <code>_config.json</code> for the port the local server uses</li>
+<li>RSS feed helper</li>
+</ul>
+
+<h2>RSS Feeds</h2>
+
+<p>You can get RSS feeds "for free" by adding an <code>autoGenerate</code> option to <code>_config.json</code>:</p>
+
+<pre><code>"autoGenerate": [{"feed": "feed.xml"}, {"rss": "feed.rss"}]
+</code></pre>
+
+<p>The helper itself is fairly easy to use:</p>
+
+<pre><code>/**
+ * RSS Jade template.
+ *
+ * @param {String} Feed URL
+ * @param {Integer} Number of paragraphs to summarise
+ * @param {String} Optional description
+ *
+ * @return {String}
+ */
+rss: function(feed, summarise, description) {
+</code></pre>
+
+<p>I've checked a few example feeds with the <a href="http://validator.w3.org/feed/">W3C validation service</a>.</p>
+</article>
+<script type="text/javascript">var disqus_developer = 0;</script><script type="text/javascript">var disqus_shortname = 'popjs';(function () {var s = document.createElement('script'); s.async = true;s.src = 'http://disqus.com/forums/popjs/count.js';(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);}());</script><div id="disqus_thread"></div><script type="text/javascript">    var disqus_url = 'http://popjs.com/2011/07/28/pop-0.0.8/';    (function() {        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);    })();</script><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<footer><p class="copyright">Content &copy; Alex R. Young</p></footer></body></html>
