@@ -1,7 +1,5 @@
 h3. Features
 
-* Port option in config
-* Make prettyprint css built in? Alternate pretty print tags? (I use the liquid tags because all the DailyJS posts use that)
 * rss helper
 * nib (to make it easier to share styles?)
 * Mock filesystem for tests so I don't need to write to /tmp
