@@ -2,7 +2,6 @@ h3. Features
 
 * nib (to make it easier to share styles?)
 * Mock filesystem for tests so I don't need to write to /tmp
-* Shared logging so I can turn it off during tests
 * Make template language configurable, default to jade
 * If enough people get confused about manually installing Express, I'll make it a dependency for the optional dev server mode
 * Autogenerate new files, generate index pages when posts change

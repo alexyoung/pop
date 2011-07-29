@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-require(__dirname + '/../lib/pop')();
+require(__dirname + '/../lib/pop').build();
+
+module.exports.id = 'POP_BIN';

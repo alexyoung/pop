@@ -1,9 +1,13 @@
 var assert = require('assert')
   , path = require('path')
+  , log = require(__dirname + '/../lib/log')
   , fs = require(__dirname + '/../lib/graceful')
   , pop = require(__dirname + '/../lib/pop')
   , cliTools = pop.cliTools
   , config;
+
+// Be quiet when testing
+log.enabled = false;
 
 config = {
   permalink: '/:year/:month/:day/:title'
