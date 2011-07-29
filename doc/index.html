@@ -119,6 +119,7 @@ code .this { color: #19469D; }</style>
 <pre><code><span class="keyword">var</span> <span class="variable">yamlish</span> = <span class="variable">require</span>(<span class="string">'yamlish'</span>)
   , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
   , <span class="variable">fs</span> = <span class="variable">require</span>(<span class="string">'fs'</span>)
+  , <span class="variable">log</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/log'</span>)
   , <span class="variable">generators</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/generators'</span>);
 
 <span class="variable">module</span>.<span class="variable">exports</span> = {</code></pre>
@@ -148,8 +149,7 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="variable">getPostFileName</span>: <span class="keyword">function</span>(<span class="variable">pf</span>, <span class="variable">date</span>, <span class="variable">title</span>, <span class="variable">format</span>) {
-    <span class="comment">// TODO: Remove non-ASCII?</span>
-    <span class="variable">title</span> = <span class="variable">title</span>.<span class="variable">toLowerCase</span>().<span class="variable">replace</span>(<span class="regexp">/\s+/g</span>, <span class="string">'-'</span>);
+    <span class="variable">title</span> = <span class="variable">encodeURI</span>(<span class="variable">title</span>.<span class="variable">toLowerCase</span>().<span class="variable">replace</span>(<span class="regexp">/\s+/g</span>, <span class="string">'-'</span>));
     <span class="keyword">return</span> <span class="string">'_posts/'</span> + <span class="variable">pf</span>.<span class="variable">replace</span>(<span class="string">':year'</span>, <span class="variable">date</span>.<span class="variable">getFullYear</span>())
              .<span class="variable">replace</span>(<span class="string">':month'</span>, <span class="this">this</span>.<span class="variable">datePad</span>(<span class="variable">date</span>.<span class="variable">getMonth</span>() + <span class="number integer">1</span>))
              .<span class="variable">replace</span>(<span class="string">':day'</span>, <span class="this">this</span>.<span class="variable">datePad</span>(<span class="variable">date</span>.<span class="variable">getDate</span>()))
@@ -169,11 +169,11 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="variable">makePost</span>: <span class="keyword">function</span>(<span class="variable">config</span>, <span class="variable">title</span>, <span class="variable">fn</span>) {
-    <span class="comment">// TODO: Get at least format and author from CLI</span>
+    <span class="comment">// TODO: Get format and author from command-line options</span>
     <span class="keyword">var</span> <span class="variable">meta</span> = {
           <span class="variable">layout</span>: <span class="string">'post'</span>
         , <span class="variable">title</span>: <span class="variable">title</span>
-        , <span class="variable">author</span>: <span class="string">''</span>
+        , <span class="variable">author</span>: <span class="variable">process</span>.<span class="variable">env</span>.<span class="class">LOGNAME</span> || <span class="string">''</span>
         , <span class="variable">tags</span>: [<span class="string">'tag_1'</span>, <span class="string">'tag_2'</span>]
         }
       , <span class="variable">url</span> = <span class="string">''</span>
@@ -186,10 +186,10 @@ code .this { color: #19469D; }</style>
 
     <span class="variable">fs</span>.<span class="variable">writeFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">config</span>.<span class="variable">root</span>, <span class="variable">fileName</span>), <span class="variable">frontMatter</span>, <span class="keyword">function</span>(<span class="variable">err</span>) {
       <span class="keyword">if</span> (<span class="variable">err</span>) {
-        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
+        <span class="variable">log</span>.<span class="variable">error</span>(<span class="string">'Error writing file:'</span>, <span class="variable">fileName</span>);
         <span class="keyword">throw</span>(<span class="variable">err</span>);
       }
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Post created:'</span>, <span class="variable">fileName</span>);
+      <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'Post created:'</span>, <span class="variable">fileName</span>);
       <span class="variable">fn</span>();
     });
   },</code></pre>
@@ -328,7 +328,7 @@ code .this { color: #19469D; }</style>
       <span class="keyword">try</span> {
         <span class="keyword">var</span> <span class="variable">pluginGenerator</span> = <span class="variable">require</span>(<span class="variable">generator</span>);
       } <span class="keyword">catch</span> (<span class="variable">e</span>) {
-        <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Unable to find the'</span>, <span class="variable">generator</span>, <span class="string">'generator'</span>);
+        <span class="variable">log</span>.<span class="variable">error</span>(<span class="string">'Error: Unable to find the'</span>, <span class="variable">generator</span>, <span class="string">'generator'</span>);
         <span class="keyword">return</span>;
       }
 
@@ -357,7 +357,7 @@ code .this { color: #19469D; }</style>
         <span class="variable">siteBuilder</span>.<span class="variable">fileMap</span> = <span class="variable">fileMap</span>;
         <span class="variable">siteBuilder</span>.<span class="variable">build</span>();
         <span class="variable">siteBuilder</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
-          <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'%d files rendered.'</span>, <span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">length</span>);
+          <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'%d files rendered.'</span>, <span class="variable">fileMap</span>.<span class="variable">files</span>.<span class="variable">length</span>);
         });
       }
     });
@@ -398,10 +398,10 @@ code .this { color: #19469D; }</style>
     <span class="keyword">return</span> <span class="variable">applyDefaults</span>(<span class="class">JSON</span>.<span class="variable">parse</span>(<span class="variable">data</span>));
   } <span class="keyword">catch</span>(<span class="variable">exception</span>) {
     <span class="keyword">if</span> (<span class="variable">exception</span>.<span class="variable">code</span> === <span class="string">'EBADF'</span>) {
-      <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'No _config.json file in this directory.  Is this a Pop site?'</span>);
+      <span class="variable">log</span>.<span class="variable">error</span>(<span class="string">'No _config.json file in this directory.  Is this a Pop site?'</span>);
       <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
     } <span class="keyword">else</span> {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error reading config:'</span>, <span class="variable">exception</span>.<span class="variable">message</span>);
+      <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'Error reading config:'</span>, <span class="variable">exception</span>.<span class="variable">message</span>);
       <span class="keyword">throw</span>(<span class="variable">exception</span>);
     }
   }
@@ -414,7 +414,8 @@ code .this { color: #19469D; }</style>
  </p>
 </td>
 <td class="code">
-<pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>);
+<pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
+  , <span class="variable">log</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/log'</span>);
 
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">readConfigFile</span>;
 </code></pre>
@@ -427,6 +428,7 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">fs</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/graceful'</span>)
   , <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
+  , <span class="variable">log</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/pop'</span>).<span class="variable">log</span>  
   , <span class="class">EventEmitter</span> = <span class="variable">require</span>(<span class="string">'events'</span>).<span class="class">EventEmitter</span>;</code></pre>
 </td>
 </tr>
@@ -499,7 +501,7 @@ code .this { color: #19469D; }</style>
       <span class="variable">file</span> = <span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">dir</span>, <span class="variable">file</span>);
       <span class="variable">self</span>.<span class="variable">filesLeft</span>++;
       <span class="variable">fs</span>.<span class="variable">stat</span>(<span class="variable">file</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">stats</span>) {
-        <span class="keyword">if</span> (<span class="variable">err</span>) <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error:'</span>, <span class="variable">err</span>);
+        <span class="keyword">if</span> (<span class="variable">err</span>) <span class="variable">log</span>.<span class="variable">error</span>(<span class="string">'Error:'</span>, <span class="variable">err</span>);
         <span class="keyword">if</span> (!<span class="variable">stats</span>) <span class="keyword">return</span>;
         <span class="keyword">if</span> (<span class="variable">stats</span>.<span class="variable">isDirectory</span>(<span class="variable">file</span>)) {
           <span class="variable">self</span>.<span class="variable">filesLeft</span>--;
@@ -1115,6 +1117,23 @@ code .this { color: #19469D; }</style>
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="variable">helpers</span>;
 </code></pre>
 </td>
+</tr><tr class="filename"><td><h2 id="lib/log.js"><a href="#">log</a></h2></td><td>lib/log.js</td></tr><tr class="code">
+<td class="docs">
+<p>module.exports = {
+  enabled: true,</p>
+
+<p>  info: function() {
+    if (this.enabled) console.log.apply(this, arguments);
+  },</p>
+
+<p>  error: function() {
+    if (this.enabled) console.error.apply(this, arguments);
+  }
+};</p>
+</td>
+<td class="code">
+
+</td>
 </tr><tr class="filename"><td><h2 id="lib/paginator.js"><a href="#">paginator</a></h2></td><td>lib/paginator.js</td></tr><tr class="code">
 <td class="docs">
 <p>Initialize <code>Paginator</code> with the number of items per-page and a list of items.</p>
@@ -1189,17 +1208,7 @@ code .this { color: #19469D; }</style>
   , <span class="class">SiteBuilder</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/site_builder'</span>)
   , <span class="variable">cliTools</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/cli_tools'</span>)
   , <span class="variable">readConfig</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/config'</span>)
-  , <span class="variable">usage</span>
-  , <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>);
-
-<span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
-<span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
-<span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
-<span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
-<span class="variable">usage</span> += <span class="string">'render pattern        Renders files that match &quot;pattern&quot;\n'</span>; 
-<span class="variable">usage</span> += <span class="string">'server [port]          Create a server on port (default: 4000) for _site/\n\n'</span>;
-<span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
-<span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;</code></pre>
+  , <span class="variable">log</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/log'</span>);</code></pre>
 </td>
 </tr>
 <tr class="code">
@@ -1265,8 +1274,19 @@ code .this { color: #19469D; }</style>
   <span class="keyword">return</span> <span class="variable">siteBuilder</span>;
 }
 
-<span class="variable">module</span>.<span class="variable">exports</span> = <span class="keyword">function</span>() {
+<span class="keyword">function</span> <span class="variable">build</span>() {
+  <span class="keyword">var</span> <span class="variable">args</span> = <span class="variable">process</span>.<span class="variable">argv</span>.<span class="variable">slice</span>(<span class="number integer">2</span>)
+    , <span class="variable">usage</span>;
   <span class="keyword">if</span> (<span class="variable">args</span>.<span class="variable">length</span> === <span class="number integer">0</span>) <span class="keyword">return</span> <span class="variable">loadConfigAndGenerateSite</span>();
+
+  <span class="variable">usage</span>  = <span class="string">'pop is a static site builder.\n\n'</span>;
+  <span class="variable">usage</span> += <span class="string">'Usage: pop [command] [options]\n'</span>;
+  <span class="variable">usage</span> += <span class="string">'new    path           Generates a new site at path/\n'</span>;
+  <span class="variable">usage</span> += <span class="string">'post   &quot;Post Title&quot;   Writes a new post file\n'</span>; 
+  <span class="variable">usage</span> += <span class="string">'render pattern        Renders files that match &quot;pattern&quot;\n'</span>; 
+  <span class="variable">usage</span> += <span class="string">'server [port]          Create a server on port (default: 4000) for _site/\n\n'</span>;
+  <span class="variable">usage</span> += <span class="string">'-v, --version         Display version and exit\n'</span>;
+  <span class="variable">usage</span> += <span class="string">'-h, --help            Shows this message\n'</span>;
 
   <span class="keyword">while</span> (<span class="variable">args</span>.<span class="variable">length</span>) {
     <span class="variable">arg</span> = <span class="variable">args</span>.<span class="variable">shift</span>();
@@ -1286,23 +1306,27 @@ code .this { color: #19469D; }</style>
       <span class="keyword">case</span> <span class="string">'-v'</span>:
       <span class="keyword">case</span> <span class="string">'--version'</span>:
         <span class="keyword">var</span> <span class="variable">version</span> = <span class="class">JSON</span>.<span class="variable">parse</span>(<span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">__dirname</span> + <span class="string">'/../package.json'</span>)).<span class="variable">version</span>;
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'pop version:'</span>, <span class="variable">version</span>);
+        <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'pop version:'</span>, <span class="variable">version</span>);
         <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">0</span>);
       <span class="keyword">break</span>;
       <span class="keyword">case</span> <span class="string">'-h'</span>:
       <span class="keyword">case</span> <span class="string">'--help'</span>:
-        <span class="variable">console</span>.<span class="variable">log</span>(<span class="variable">usage</span>);
+        <span class="variable">log</span>.<span class="variable">info</span>(<span class="variable">usage</span>);
         <span class="variable">process</span>.<span class="variable">exit</span>(<span class="number integer">1</span>);
       <span class="keyword">default</span>:
         <span class="variable">loadConfigAndGenerateSite</span>();
     }
   }
-};
+}
 
-<span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">SiteBuilder</span> = <span class="class">SiteBuilder</span>;
-<span class="variable">module</span>.<span class="variable">exports</span>.<span class="class">FileMap</span> = <span class="class">FileMap</span>;
-<span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">generateSite</span> = <span class="variable">generateSite</span>;
-<span class="variable">module</span>.<span class="variable">exports</span>.<span class="variable">cliTools</span> = <span class="variable">cliTools</span>;
+<span class="variable">module</span>.<span class="variable">exports</span> = {
+  <span class="variable">build</span>: <span class="variable">build</span>
+, <span class="class">SiteBuilder</span>: <span class="class">SiteBuilder</span>
+, <span class="class">FileMap</span>: <span class="class">FileMap</span>
+, <span class="variable">generateSite</span>: <span class="variable">generateSite</span>
+, <span class="variable">cliTools</span>: <span class="variable">cliTools</span>
+, <span class="variable">log</span>: <span class="variable">log</span>
+};
 </code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/server.js"><a href="#">server</a></h2></td><td>lib/server.js</td></tr><tr class="code">
@@ -1313,7 +1337,8 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">path</span> = <span class="variable">require</span>(<span class="string">'path'</span>)
   , <span class="variable">watch</span> = <span class="variable">require</span>(<span class="string">'nodewatch'</span>)
-  , <span class="variable">siteBuilder</span>;</code></pre>
+  , <span class="variable">siteBuilder</span>
+  , <span class="variable">log</span> = <span class="variable">require</span>(<span class="variable">__dirname</span> + <span class="string">'/log'</span>);</code></pre>
 </td>
 </tr>
 <tr class="code">
@@ -1345,7 +1370,7 @@ code .this { color: #19469D; }</style>
 
   <span class="comment">// TODO: Config</span>
   <span class="variable">app</span>.<span class="variable">listen</span>(<span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
-  <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Listening on port'</span>, <span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
+  <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'Listening on port'</span>, <span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
 }</code></pre>
 </td>
 </tr>
@@ -1358,11 +1383,11 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">function</span> <span class="variable">watchChanges</span>() {
   <span class="keyword">function</span> <span class="variable">buildChange</span>(<span class="variable">file</span>) {
-    <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'File changed:'</span>, <span class="variable">file</span>);
+    <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'File changed:'</span>, <span class="variable">file</span>);
     <span class="keyword">try</span> {
       <span class="variable">siteBuilder</span>.<span class="variable">buildChange</span>(<span class="variable">file</span>);
     } <span class="keyword">catch</span> (<span class="variable">e</span>) {
-      <span class="variable">console</span>.<span class="variable">log</span>(<span class="string">'Error building site:'</span>, <span class="variable">e</span>);
+      <span class="variable">log</span>.<span class="variable">error</span>(<span class="string">'Error building site:'</span>, <span class="variable">e</span>);
     }
   }
 

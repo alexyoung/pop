@@ -25,6 +25,7 @@ exports['test datePad'] = function() {
 exports['test getPostFileName'] = function() {
   var date = new Date(2011, 10, 1, 10, 10);
   assert.equal('_posts/2011-11-01-awesome-post.md', cliTools.getPostFileName('/:year/:month/:day/:title', date, 'Awesome Post', 'md'));
+  assert.equal('_posts/2011-11-01-awesome-p%C3%A9st.md', cliTools.getPostFileName('/:year/:month/:day/:title', date, 'Awesome Pést', 'md'));
 };
 
 exports['test makePost'] = function(beforeExit) {
