@@ -106,3 +106,9 @@ exports['test paginatedPosts'] = function() {
   assert.match(html, /<article/);
 };
 
+exports['test postsForTag'] = function() {
+  siteBuilder.paginator = new Paginator(config.perPage, siteBuilder.posts)
+  var posts = helpers.postsForTag.apply(siteBuilder, ['a']);
+  assert.ok(posts.length > 0);
+};
+
