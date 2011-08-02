@@ -1,6 +1,5 @@
 h3. Features
 
-* Build-in tag page generator
 * nib (to make it easier to share styles?)
 * Mock filesystem for tests so I don't need to write to /tmp
 * Make template language configurable, default to jade
