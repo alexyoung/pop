@@ -14,4 +14,5 @@ p Click a tag to view the associated posts.
         a.tag(href="#") (#{posts.length}) #{tag}
       .posts
         - for (var j = 0, post = posts[j]; j < posts.length; j++, post = posts[j])
-          p #{post.title}
+          p
+            a(href="#{post.url}") #{post.title}
