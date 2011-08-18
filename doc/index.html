@@ -1312,7 +1312,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">siteBuilder</span>.<span class="variable">build</span>();
   });
 
-  <span class="variable">siteBuilder</span>.<span class="variable">on</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
+  <span class="variable">siteBuilder</span>.<span class="variable">once</span>(<span class="string">'ready'</span>, <span class="keyword">function</span>() {
     <span class="keyword">if</span> (<span class="variable">useServer</span>) {
       <span class="variable">server</span>.<span class="variable">run</span>();
       <span class="variable">server</span>.<span class="variable">watch</span>();
@@ -1416,7 +1416,6 @@ code .this { color: #19469D; }</style>
     }
   });
 
-  <span class="comment">// TODO: Config</span>
   <span class="variable">app</span>.<span class="variable">listen</span>(<span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
   <span class="variable">log</span>.<span class="variable">info</span>(<span class="string">'Listening on port'</span>, <span class="variable">siteBuilder</span>.<span class="variable">config</span>.<span class="variable">port</span>);
 }</code></pre>
@@ -1637,58 +1636,68 @@ and events are used to track progress.</p>
     <span class="keyword">var</span> <span class="variable">posts</span> = <span class="variable">self</span>.<span class="variable">findPosts</span>()
       , <span class="variable">otherFiles</span> = <span class="variable">self</span>.<span class="variable">otherRenderedFiles</span>()
       , <span class="variable">staticFiles</span> = <span class="variable">self</span>.<span class="variable">staticFiles</span>()
-      , <span class="variable">autoGen</span> = <span class="variable">self</span>.<span class="variable">autoGenerate</span>()
-      , <span class="variable">postsLeft</span> = <span class="variable">posts</span>.<span class="variable">length</span>
-      , <span class="variable">filesLeft</span>;
+      , <span class="variable">autoGen</span> = <span class="variable">self</span>.<span class="variable">autoGenerate</span>();
 
-    <span class="comment">// FIXME: In future not all auto generated files will be related to posts</span>
-    <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span> === <span class="number integer">0</span>) <span class="variable">autoGen</span> = [];
+    <span class="keyword">function</span> <span class="variable">renderPost</span>() {
+      <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span>) {
+        <span class="keyword">var</span> <span class="variable">file</span> = <span class="variable">posts</span>.<span class="variable">pop</span>();
+        <span class="variable">self</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+          <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render post'</span>);
+        });
+      } <span class="keyword">else</span> {
+        <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render autoGen'</span>);
+      }
+    }
 
-    <span class="variable">filesLeft</span> = <span class="variable">posts</span>.<span class="variable">length</span> + <span class="variable">otherFiles</span>.<span class="variable">length</span> + <span class="variable">staticFiles</span>.<span class="variable">length</span> + <span class="variable">autoGen</span>.<span class="variable">length</span>;
+    <span class="keyword">function</span> <span class="variable">renderAutoGen</span>() {
+      <span class="keyword">if</span> (<span class="variable">autoGen</span>.<span class="variable">length</span>) {
+        <span class="keyword">var</span> <span class="variable">file</span> = <span class="variable">autoGen</span>.<span class="variable">pop</span>();
+        <span class="variable">self</span>.<span class="variable">autoGenerateFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+          <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render autoGen'</span>);
+        });
+      } <span class="keyword">else</span> {
+        <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'check finished'</span>);
+      }
+    }
+
+    <span class="keyword">function</span> <span class="variable">renderOtherFile</span>() {
+      <span class="keyword">if</span> (<span class="variable">otherFiles</span>.<span class="variable">length</span>) {
+        <span class="keyword">var</span> <span class="variable">file</span> = <span class="variable">otherFiles</span>.<span class="variable">pop</span>();
+        <span class="variable">self</span>.<span class="variable">renderFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+          <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render otherFile'</span>);
+        });
+      } <span class="keyword">else</span> {
+        <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'check finished'</span>);
+      }
+    }
+
+    <span class="keyword">function</span> <span class="variable">renderStaticFile</span>() {
+      <span class="keyword">if</span> (<span class="variable">staticFiles</span>.<span class="variable">length</span>) {
+        <span class="keyword">var</span> <span class="variable">file</span> = <span class="variable">staticFiles</span>.<span class="variable">pop</span>();
+        <span class="variable">self</span>.<span class="variable">copyStatic</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
+          <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render staticFile'</span>);
+        });
+      } <span class="keyword">else</span> {
+        <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'check finished'</span>);
+      }
+    }
 
     <span class="keyword">function</span> <span class="variable">checkFinished</span>() {
+      <span class="keyword">var</span> <span class="variable">filesLeft</span> = <span class="variable">posts</span>.<span class="variable">length</span> + <span class="variable">otherFiles</span>.<span class="variable">length</span> + <span class="variable">staticFiles</span>.<span class="variable">length</span> + <span class="variable">autoGen</span>.<span class="variable">length</span>;
       <span class="keyword">if</span> (<span class="variable">filesLeft</span> === <span class="number integer">0</span>) {
         <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'ready'</span>);
       }
     }
 
-    <span class="keyword">function</span> <span class="variable">renderAutoGen</span>() {
-      <span class="variable">autoGen</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-        <span class="variable">self</span>.<span class="variable">autoGenerateFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
-          <span class="variable">filesLeft</span>--;
-          <span class="variable">checkFinished</span>();
-        });
-      });
-    }
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="string">'render post'</span>, <span class="variable">renderPost</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="string">'render autoGen'</span>, <span class="variable">renderAutoGen</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="string">'render otherFile'</span>, <span class="variable">renderOtherFile</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="string">'render staticFile'</span>, <span class="variable">renderStaticFile</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="string">'check finished'</span>, <span class="variable">checkFinished</span>);
 
-    <span class="keyword">if</span> (<span class="variable">posts</span>.<span class="variable">length</span> === <span class="number integer">0</span>) {
-      <span class="variable">renderAutoGen</span>();
-    }
-
-    <span class="variable">posts</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-      <span class="variable">self</span>.<span class="variable">renderPost</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
-        <span class="variable">filesLeft</span>--;
-        <span class="variable">postsLeft</span>--;
-        <span class="variable">checkFinished</span>();
-        <span class="keyword">if</span> (<span class="variable">postsLeft</span> === <span class="number integer">0</span>) {
-          <span class="variable">renderAutoGen</span>();
-        }
-      });
-    });
-
-    <span class="variable">otherFiles</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) {
-      <span class="variable">self</span>.<span class="variable">renderFile</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
-        <span class="variable">filesLeft</span>--;
-        <span class="variable">checkFinished</span>();
-      });
-    });
-
-    <span class="variable">staticFiles</span>.<span class="variable">forEach</span>(<span class="keyword">function</span>(<span class="variable">file</span>) { 
-      <span class="variable">self</span>.<span class="variable">copyStatic</span>(<span class="variable">file</span>, <span class="keyword">function</span>() {
-        <span class="variable">filesLeft</span>--;
-        <span class="variable">checkFinished</span>();
-      });
-    });
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render post'</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render otherFile'</span>);
+    <span class="variable">self</span>.<span class="variable">events</span>.<span class="variable">emit</span>(<span class="string">'render staticFile'</span>);
   }
 
   <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">once</span>(<span class="string">'cached includes'</span>, <span class="variable">build</span>);
@@ -2096,7 +2105,7 @@ are currently available.</p>
 
   <span class="keyword">function</span> <span class="variable">render</span>(<span class="variable">fileData</span>, <span class="variable">meta</span>, <span class="variable">layoutData</span>, <span class="variable">dirName</span>) {
     <span class="comment">// Use .html for file extensions unless the file has the format file.ext.jade</span>
-    <span class="keyword">var</span> <span class="variable">ext</span> = <span class="variable">file</span>.<span class="variable">name</span>.<span class="variable">match</span>(<span class="string">'\\.[^.]*\\'</span> + <span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>) + <span class="string">'$'</span>) ? <span class="string">''</span> : <span class="string">'.html'</span>;
+    <span class="keyword">var</span> <span class="variable">ext</span> = <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">match</span>(<span class="string">'\\.[^.]*\\'</span> + <span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>) + <span class="string">'$'</span>) ? <span class="string">''</span> : <span class="string">'.html'</span>;
     <span class="variable">dirName</span> = <span class="variable">dirName</span> || <span class="string">''</span>;
 
     <span class="keyword">var</span> <span class="variable">outFileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(
@@ -2272,7 +2281,21 @@ are currently available.</p>
 </td>
 <td class="code">
 <pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">on</span> = <span class="keyword">function</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>) {
-  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>); 
+  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">on</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>);
+};</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
+<p>Adds a listener to the internal <code>EventEmitter</code> object.</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  The event name</p></li><li><p><strong>param</strong>: <em>Function</em>  The handler</p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="class">SiteBuilder</span>.<span class="variable">prototype</span>.<span class="variable">once</span> = <span class="keyword">function</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>) {
+  <span class="this">this</span>.<span class="variable">events</span>.<span class="variable">once</span>(<span class="variable">eventName</span>, <span class="variable">fn</span>);
 };
 
 <span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">SiteBuilder</span>;
