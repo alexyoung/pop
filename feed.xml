@@ -163,4 +163,17 @@ rss: function(feed, summarise, description) {
 
 &lt;p&gt;This release includes a tags page for the built-in site generator, and a helper called &lt;code&gt;postsForTag&lt;/code&gt;.&lt;/p&gt;</content></entry><entry><title>Pop 0.1.1</title><link href="http://popjs.com/2011/08/18/pop-0.1.1"></link><updated>2011-08-18T01:08:00Z</updated><id>http://popjs.com/2011/08/18/pop-0.1.1</id><content type="html">&lt;p&gt;Pop 0.1.1 has been released.  This version improves the build process by making it use more events rather than counting down the number of files that have been processed.&lt;/p&gt;
 
-&lt;p&gt;This should make the site build process more stable.&lt;/p&gt;</content></entry></feed>
+&lt;p&gt;This should make the site build process more stable.&lt;/p&gt;</content></entry><entry><title>Google Analytics Plugin</title><link href="http://popjs.com/2011/08/23/pop-ga"></link><updated>2011-08-23T01:08:00Z</updated><id>http://popjs.com/2011/08/23/pop-ga</id><content type="html">&lt;p&gt;&lt;a href="https://github.com/shapeshed/pop-ga"&gt;pop-ga&lt;/a&gt; by &lt;a href="http://shapeshed.com/"&gt;George Ornbo&lt;/a&gt; is a Google Analytics plugin for pop.  It can be installed using npm:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;npm install -g pop-ga
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And then used by updating your &lt;code&gt;_config.json&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;, "require": ["pop-ga"]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, call the plugin's helper with your Google Analytics ID:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;!{ga('UA-345678-90')}
+&lt;/code&gt;&lt;/pre&gt;</content></entry></feed>
