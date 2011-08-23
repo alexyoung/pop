@@ -42,4 +42,4 @@ h3. Plugins
 
 * "pop-disqus":https://github.com/alexyoung/pop-disqus
 * "pop-gallery":https://github.com/alexyoung/pop-gallery
-
+* "pop-ga":https://github.com/shapeshed/pop-ga (Google Analytics plugin, by "George Ornbo":http://shapeshed.com)
