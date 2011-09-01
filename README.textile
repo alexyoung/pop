@@ -38,6 +38,10 @@ Must be valid JSON.
 }
 </pre>
 
+h3. Contributions
+
+* George Ornbo
+
 h3. Plugins
 
 * "pop-disqus":https://github.com/alexyoung/pop-disqus
