@@ -12,8 +12,8 @@
   , "underscore.date": "0.5.x"
   , "stextile": "latest"
   , "nodewatch": "latest"
-  , "jade": ">= 0.13.0"
-  , "stylus": ">= 0.13.7"
+  , "jade": "0.13.0"
+  , "stylus": "0.13.7"
   }
 , "devDependencies": {
     "dox": "latest"
