@@ -771,6 +771,21 @@ code .this { color: #19469D; }</style>
 </tr>
 <tr class="code">
 <td class="docs">
+<p>Renders a Jade template</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>String</em>  A Jade template</p></li><li><p><strong>param</strong>: <em>Object</em>  Options passed to Jade</p></li><li><p><strong>return</strong>: <em>String</em> </p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="variable">render</span>: <span class="keyword">function</span>(<span class="variable">template</span>, <span class="variable">options</span>) {
+    <span class="keyword">var</span> <span class="variable">fn</span> = <span class="variable">jade</span>.<span class="variable">compile</span>(<span class="variable">template</span>, <span class="variable">options</span>);
+    <span class="keyword">return</span> <span class="variable">fn</span>(<span class="variable">options</span>.<span class="variable">locals</span>);
+  },</code></pre>
+</td>
+</tr>
+<tr class="code">
+<td class="docs">
 <p>Pagination links.</p>
 
 <h2></h2>
@@ -801,7 +816,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">template</span> += <span class="string">'      - if (paginator.nextPage &lt;= paginator.pages)\n'</span>;
     <span class="variable">template</span> += <span class="string">'        a.next(href=&quot;/page&quot; + paginator.nextPage + &quot;/&quot;) Next\n'</span>;
     <span class="variable">template</span> += <span class="string">'        span &rarr;\n'</span>;
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: { <span class="variable">paginator</span>: <span class="variable">paginator</span> } });
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: { <span class="variable">paginator</span>: <span class="variable">paginator</span> } });
   },</code></pre>
 </td>
 </tr>
@@ -821,7 +836,7 @@ code .this { color: #19469D; }</style>
     <span class="variable">template</span> = <span class="string">''</span>
       + <span class="string">'- for (var i = 0; i &lt; paginator.items.length; i++)\n'</span>
       + <span class="string">'  !{hNews(paginator.items[i], true)}\n'</span>;
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span> }) });
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span> }) });
   },</code></pre>
 </td>
 </tr>
@@ -839,7 +854,7 @@ code .this { color: #19469D; }</style>
       , <span class="variable">url</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span>
       , <span class="variable">title</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>
       , <span class="variable">perPage</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">perPage</span>
-      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>).<span class="variable">reverse</span>()
+      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>)
       , <span class="variable">site</span> = <span class="this">this</span>;
 
     <span class="variable">summarise</span> = <span class="keyword">typeof</span> <span class="variable">summarise</span> === <span class="string">'boolean'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">summarise</span> ? <span class="number integer">3</span> : <span class="variable">summarise</span>;
@@ -869,7 +884,7 @@ code .this { color: #19469D; }</style>
     <span class="keyword">else</span>
       <span class="variable">template</span> += <span class="string">'      content(type=&quot;html&quot;) !{h(post.content)}\n'</span>;
 
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({
         <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>
       , <span class="variable">posts</span>: <span class="variable">posts</span>
       , <span class="variable">title</span>: <span class="variable">title</span>
@@ -894,7 +909,7 @@ code .this { color: #19469D; }</style>
       , <span class="variable">url</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">url</span>
       , <span class="variable">title</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">title</span>
       , <span class="variable">perPage</span> = <span class="this">this</span>.<span class="variable">config</span>.<span class="variable">perPage</span>
-      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>).<span class="variable">reverse</span>()
+      , <span class="variable">posts</span> = <span class="this">this</span>.<span class="variable">posts</span>.<span class="variable">slice</span>(-<span class="variable">perPage</span>)
       , <span class="variable">site</span> = <span class="this">this</span>;
 
     <span class="variable">description</span> = <span class="variable">description</span> || <span class="variable">title</span>;
@@ -928,7 +943,7 @@ code .this { color: #19469D; }</style>
     <span class="keyword">else</span>
       <span class="variable">template</span> += <span class="string">'        description !{h(post.content)}\n'</span>;
 
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="variable">site</span>.<span class="variable">applyHelpers</span>({
         <span class="variable">paginator</span>: <span class="variable">site</span>.<span class="variable">paginator</span>
       , <span class="variable">posts</span>: <span class="variable">posts</span>
       , <span class="variable">title</span>: <span class="variable">title</span>
@@ -1043,7 +1058,7 @@ code .this { color: #19469D; }</style>
     } <span class="keyword">else</span> {
       <span class="variable">template</span> += <span class="string">'  !{post.content}\n'</span>;
     }
-    <span class="keyword">return</span> <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="this">this</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span> }) });
+    <span class="keyword">return</span> <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">template</span>, { <span class="variable">locals</span>: <span class="this">this</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span> }) });
   },</code></pre>
 </td>
 </tr>
@@ -1740,7 +1755,7 @@ are currently available.</p>
       <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
       <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">atom</span>(<span class="string">'&quot; + this.config.url + '</span>/<span class="string">' + file.feed + &quot;'</span>)}&<span class="variable">quot</span>;
-        , <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
+        , <span class="variable">html</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
       <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">feed</span>), <span class="variable">html</span>);
       <span class="variable">fn</span>();
     }
@@ -1751,7 +1766,7 @@ are currently available.</p>
       <span class="variable">console</span>.<span class="variable">error</span>(<span class="string">'Error: Built-in feed generation requires config values for: url and title.'</span>); 
     } <span class="keyword">else</span> {
       <span class="keyword">var</span> <span class="variable">layoutData</span> = &<span class="variable">quot</span>;!{<span class="variable">rss</span>(<span class="string">'&quot; + this.config.url + '</span>/<span class="string">' + file.rss + &quot;'</span>)}&<span class="variable">quot</span>;
-        , <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
+        , <span class="variable">html</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ }) });
       <span class="this">this</span>.<span class="variable">write</span>(<span class="this">this</span>.<span class="variable">outFileName</span>(<span class="variable">file</span>.<span class="variable">rss</span>), <span class="variable">html</span>);
       <span class="variable">fn</span>();
     }
@@ -2015,7 +2030,7 @@ are currently available.</p>
           } <span class="keyword">else</span> {
             <span class="variable">fs</span>.<span class="variable">readFile</span>(<span class="variable">path</span>.<span class="variable">join</span>(<span class="variable">self</span>.<span class="variable">root</span>, <span class="string">'_includes'</span>, <span class="variable">file</span>), <span class="string">'utf8'</span>, <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">data</span>) {
               <span class="comment">// TODO: This won't cope with _include/file/file, but people will expect this</span>
-              <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({}) })
+              <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({}) })
                 , <span class="variable">name</span> = <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>).<span class="variable">replace</span>(<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>), <span class="string">''</span>);
               <span class="variable">self</span>.<span class="variable">includes</span>[<span class="variable">name</span>] = <span class="variable">html</span>;
 
@@ -2051,7 +2066,7 @@ are currently available.</p>
     }
 
     <span class="keyword">try</span> {
-      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span>, <span class="variable">content</span>: <span class="variable">content</span> }) })
+      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">data</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">post</span>: <span class="variable">post</span>, <span class="variable">content</span>: <span class="variable">content</span> }) })
         , <span class="variable">fileName</span> = <span class="variable">self</span>.<span class="variable">outFileName</span>(<span class="variable">post</span>.<span class="variable">fileName</span>, <span class="string">'index.html'</span>)
         , <span class="variable">dirName</span> = <span class="variable">path</span>.<span class="variable">dirname</span>(<span class="variable">fileName</span>);
     } <span class="keyword">catch</span> (<span class="variable">e</span>) {
@@ -2113,14 +2128,14 @@ are currently available.</p>
       <span class="variable">path</span>.<span class="variable">basename</span>(<span class="variable">file</span>.<span class="variable">name</span>).<span class="variable">replace</span>(<span class="variable">path</span>.<span class="variable">extname</span>(<span class="variable">file</span>.<span class="variable">name</span>), <span class="variable">ext</span>)
     );
 
-    <span class="keyword">var</span> <span class="variable">fileContent</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">fileData</span>, {
+    <span class="keyword">var</span> <span class="variable">fileContent</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">fileData</span>, {
       <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">paginator</span>: <span class="variable">self</span>.<span class="variable">paginator</span>, <span class="variable">page</span>: <span class="variable">meta</span> }),
     });
 
     <span class="keyword">if</span> (!<span class="variable">layoutData</span>) {
       <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">fileContent</span>);
     } <span class="keyword">else</span> {
-      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">jade</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">content</span>: <span class="variable">fileContent</span> }) });
+      <span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">helpers</span>.<span class="variable">render</span>(<span class="variable">layoutData</span>, { <span class="variable">locals</span>: <span class="variable">self</span>.<span class="variable">applyHelpers</span>({ <span class="variable">content</span>: <span class="variable">fileContent</span> }) });
       <span class="variable">self</span>.<span class="variable">write</span>(<span class="variable">outFileName</span>, <span class="variable">html</span>);
     }
 
