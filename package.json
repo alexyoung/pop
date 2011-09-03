@@ -1,6 +1,6 @@
 { "name": "pop"
 , "description": "A static website and blog generator"
-, "version": "0.1.3"
+, "version": "0.1.4"
 , "url": "http://popjs.com"
 , "author": "Alex R. Young <alex@helicoid.net>"
 , "engines": ["node >= 0.4.7"]
@@ -12,8 +12,8 @@
   , "underscore.date": "0.5.x"
   , "stextile": "latest"
   , "nodewatch": "latest"
-  , "jade": "0.13.0"
-  , "stylus": "0.13.7"
+  , "jade": "0.15.3"
+  , "stylus": "0.15.1"
   }
 , "devDependencies": {
     "dox": "latest"
