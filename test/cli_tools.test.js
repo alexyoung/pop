@@ -48,6 +48,7 @@ exports['test makeSite'] = function(beforeExit) {
     assert.ok(path.existsSync(fileName));
     assert.ok(path.existsSync(fileName + '/_config.json'));
     assert.ok(path.existsSync(fileName + '/index.jade'));
+    assert.ok(path.existsSync(fileName + '/robots.txt'));
     assert.ok(path.existsSync(fileName + '/_layouts/default.jade'));
   });
 };
