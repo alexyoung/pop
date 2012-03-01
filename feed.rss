@@ -1,43 +1,196 @@
-<?xml version="1.0" encoding="utf-8" ?><rss version="2.0"><channel><title>Pop Blog</title><link>http://popjs.com</link><description>Pop Blog</description><pubDate>Thu, 21 Jul 2011 01:07:00 GMT</pubDate><lastBuildDate>Thu, 21 Jul 2011 01:07:00 GMT</lastBuildDate><generator>Pop</generator><item><title>Pop Released</title><link>http://popjs.com/2011/07/21/example-post-about-something</link><pubDate>Thu, 21 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/21/example-post-about-something</guid><description>&lt;p&gt;Pop version 0.0.1 has been released:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Pop Blog</title>
+    <link>http://popjs.com
+    </link>
+    <description>Pop Blog
+    </description>
+    <pubDate>Tue, 23 Aug 2011 01:08:00 GMT
+    </pubDate>
+    <lastBuildDate>Tue, 23 Aug 2011 01:08:00 GMT
+    </lastBuildDate>
+    <generator>Pop
+    </generator>
+    <item>
+      <title>Google Analytics Plugin</title>
+      <link>http://popjs.com/2011/08/23/pop-ga
+      </link>
+      <pubDate>Tue, 23 Aug 2011 01:08:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/08/23/pop-ga
+      </guid>
+      <description>&lt;p&gt;&lt;a href="https://github.com/shapeshed/pop-ga"&gt;pop-ga&lt;/a&gt; by &lt;a href="http://shapeshed.com/"&gt;George Ornbo&lt;/a&gt; is a Google Analytics plugin for pop.  It can be installed using npm:&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;GitHub: &lt;a href="https://github.com/alexyoung/pop"&gt;alexyoung / pop&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This includes &lt;a href="https://github.com/alexyoung/stextile"&gt;stextile&lt;/a&gt;, which is a rough-and-ready &lt;a href="http://www.textism.com/tools/textile/"&gt;Textile&lt;/a&gt; parser.  Pop also supports &lt;a href="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Pop sites use &lt;a href="http://jade-lang.com/"&gt;Jade&lt;/a&gt; and &lt;a href="http://learnboost.github.com/stylus/"&gt;Stylus&lt;/a&gt;.  These are CSS selector-based shorthands for quickly writing HTML and CSS.&lt;/p&gt;</description></item><item><title>Pop 0.0.2</title><link>http://popjs.com/2011/07/22/pop-0.0.2</link><pubDate>Fri, 22 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/22/pop-0.0.2</guid><description>&lt;p&gt;Pop version 0.0.2 has been released.  This version adds additional default styles to the site generator (blockquotes, pagination), and adds post summary support.&lt;/p&gt;
-
-&lt;p&gt;Writing YAML front-matter like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;      ---
-      layout: post
-      title: Amazing Facts About Lions
-      summary: Above all, lions are amazing creatures.
-      author: Dave Grohl
-      tags:   
-      - releases
-      ---
-
-      Post content here.
+&lt;pre&gt;&lt;code&gt;npm install -g pop-ga
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;This will make &lt;code&gt;post.summary&lt;/code&gt; available to templates.  It gets processed with markdown or textile, depending on the format of the post, and also applies helpers.  I've added this to the &lt;code&gt;hNews()&lt;/code&gt; helper when used to generate summaries.&lt;/p&gt;</description></item><item><title>Pop 0.0.3</title><link>http://popjs.com/2011/07/23/pop-0.0.3</link><pubDate>Sat, 23 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/23/pop-0.0.3</guid><description>&lt;p&gt;Pop version 0.0.3 is out.&lt;/p&gt;
+&lt;p&gt;And then used by updating your &lt;code&gt;_config.json&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;, "require": ["pop-ga"]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, call the plugin's helper with your Google Analytics ID:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;!{ga('UA-345678-90')}
+&lt;/code&gt;&lt;/pre&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.1.1</title>
+      <link>http://popjs.com/2011/08/18/pop-0.1.1
+      </link>
+      <pubDate>Thu, 18 Aug 2011 01:08:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/08/18/pop-0.1.1
+      </guid>
+      <description>&lt;p&gt;Pop 0.1.1 has been released.  This version improves the build process by making it use more events rather than counting down the number of files that have been processed.&lt;/p&gt;
+
+&lt;p&gt;This should make the site build process more stable.&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.1.0</title>
+      <link>http://popjs.com/2011/08/02/pop-0.1.0
+      </link>
+      <pubDate>Tue, 02 Aug 2011 01:08:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/08/02/pop-0.1.0
+      </guid>
+      <description>&lt;p&gt;I've released Pop 0.1.0.  This cements the basic functionality that I want to include in Pop for the near future.&lt;/p&gt;
+
+&lt;p&gt;This release includes a tags page for the built-in site generator, and a helper called &lt;code&gt;postsForTag&lt;/code&gt;.&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.9</title>
+      <link>http://popjs.com/2011/07/29/pop-0.0.9
+      </link>
+      <pubDate>Fri, 29 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/29/pop-0.0.9
+      </guid>
+      <description>&lt;p&gt;Pop 0.0.9 is out:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Atom feed helper takes less options (the variables are all in &lt;code&gt;config&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;Atom feed uses &lt;code&gt;config.perPage&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Post file names with extra dots will be parsed correctly&lt;/li&gt;
-&lt;li&gt;YAML front-matter will be extracted less greedily&lt;/li&gt;
-&lt;li&gt;YAML front-matter can now contain a &lt;code&gt;summary&lt;/code&gt; property to make it easier to display post summaries in lists&lt;/li&gt;
-&lt;li&gt;Trailing slashes will be removed from &lt;code&gt;config.url&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Pop 0.0.4</title><link>http://popjs.com/2011/07/24/pop-0.0.4</link><pubDate>Sun, 24 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/24/pop-0.0.4</guid><description>&lt;p&gt;Pop 0.0.4 is out:&lt;/p&gt;
+&lt;li&gt;Added centralised logging (mainly so I can turn off logs in tests)&lt;/li&gt;
+&lt;li&gt;Defaults post author to &lt;code&gt;LOGNAME&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Escapes post file names&lt;/li&gt;
+&lt;/ul&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.8</title>
+      <link>http://popjs.com/2011/07/28/pop-0.0.8
+      </link>
+      <pubDate>Thu, 28 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/28/pop-0.0.8
+      </guid>
+      <description>&lt;p&gt;I've just released Pop 0.0.8, which adds:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; will generate a site in the current directory and exit&lt;/li&gt;
-&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; on a path that doesn't look like a Pop site will print an error rather than a confusing stack trace&lt;/li&gt;
-&lt;li&gt;Pop server mode will watch all subdirectories for changes, so things like stylesheets (including Stylus files) will automatically regenerate the changed file&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Pop 0.0.5</title><link>http://popjs.com/2011/07/25/pop-0.0.5</link><pubDate>Mon, 25 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/25/pop-0.0.5</guid><description>&lt;p&gt;Pop 0.0.5 has been released.  This version introduces a plugin architecture and post-filters.&lt;/p&gt;
+&lt;li&gt;An option to &lt;code&gt;_config.json&lt;/code&gt; for the port the local server uses&lt;/li&gt;
+&lt;li&gt;RSS feed helper&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;RSS Feeds&lt;/h2&gt;
+
+&lt;p&gt;You can get RSS feeds "for free" by adding an &lt;code&gt;autoGenerate&lt;/code&gt; option to &lt;code&gt;_config.json&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;"autoGenerate": [{"feed": "feed.xml"}, {"rss": "feed.rss"}]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The helper itself is fairly easy to use:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * RSS Jade template.
+ *
+ * @param {String} Feed URL
+ * @param {Integer} Number of paragraphs to summarise
+ * @param {String} Optional description
+ *
+ * @return {String}
+ */
+rss: function(feed, summarise, description) {
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I've checked a few example feeds with the &lt;a href="http://validator.w3.org/feed/"&gt;W3C validation service&lt;/a&gt;.&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.7</title>
+      <link>http://popjs.com/2011/07/27/pop-0.0.7
+      </link>
+      <pubDate>Wed, 27 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/27/pop-0.0.7
+      </guid>
+      <description>&lt;p&gt;Pop 0.0.7 is out:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Added generators&lt;/li&gt;
+&lt;li&gt;Plugins can add their own generators through &lt;code&gt;myPlugin.generators&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SiteBuilder&lt;/code&gt; should trigger the server properly&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Using Generators&lt;/h2&gt;
+
+&lt;p&gt;Generating a site with Pop generally works like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pop new new_site
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Generators can now be used to generate different kinds of sites:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pop new pop-gallery new_site
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example requires &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Writing Generators&lt;/h2&gt;
+
+&lt;p&gt;Basic usage is to make a CommonJS module with a &lt;code&gt;generator&lt;/code&gt; property:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;module.exports = {
+  generator: {
+    run: function(helpers, pathName) {
+    }
+  }
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The parameters will be passed by Pop.  The &lt;code&gt;helpers&lt;/code&gt; value contains the internal cli_tools.js module, and &lt;code&gt;pathName&lt;/code&gt; is the destination path for the site.&lt;/p&gt;
+
+&lt;p&gt;A full example is available here: &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.6</title>
+      <link>http://popjs.com/2011/07/26/pop-0.0.6
+      </link>
+      <pubDate>Tue, 26 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/26/pop-0.0.6
+      </guid>
+      <description>&lt;p&gt;Pop 0.0.6 adds the following features and enhancements:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A new command-line option, &lt;code&gt;render&lt;/code&gt;, makes Pop only render files that match a pattern&lt;/li&gt;
+&lt;li&gt;Character and word truncation helpers have been added&lt;/li&gt;
+&lt;li&gt;The Atom feed can now summarise posts based on paragraph length&lt;/li&gt;
+&lt;/ul&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.5</title>
+      <link>http://popjs.com/2011/07/25/pop-0.0.5
+      </link>
+      <pubDate>Mon, 25 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/25/pop-0.0.5
+      </guid>
+      <description>&lt;p&gt;Pop 0.0.5 has been released.  This version introduces a plugin architecture and post-filters.&lt;/p&gt;
 
 &lt;h2&gt;Post-Filters&lt;/h2&gt;
 
@@ -83,97 +236,91 @@ module.exports = {
 &lt;li&gt;&lt;code&gt;postFilters&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;All the usual rules apply.  Get started by looking at &lt;a href="https://github.com/alexyoung/pop-disqus"&gt;pop-disqus&lt;/a&gt;.  Write tests, even if they're basic!&lt;/p&gt;</description></item><item><title>Pop 0.0.6</title><link>http://popjs.com/2011/07/26/pop-0.0.6</link><pubDate>Tue, 26 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/26/pop-0.0.6</guid><description>&lt;p&gt;Pop 0.0.6 adds the following features and enhancements:&lt;/p&gt;
+&lt;p&gt;All the usual rules apply.  Get started by looking at &lt;a href="https://github.com/alexyoung/pop-disqus"&gt;pop-disqus&lt;/a&gt;.  Write tests, even if they're basic!&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.3</title>
+      <link>http://popjs.com/2011/07/23/pop-0.0.3
+      </link>
+      <pubDate>Sat, 23 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/23/pop-0.0.3
+      </guid>
+      <description>&lt;p&gt;Pop version 0.0.3 is out.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;A new command-line option, &lt;code&gt;render&lt;/code&gt;, makes Pop only render files that match a pattern&lt;/li&gt;
-&lt;li&gt;Character and word truncation helpers have been added&lt;/li&gt;
-&lt;li&gt;The Atom feed can now summarise posts based on paragraph length&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Pop 0.0.7</title><link>http://popjs.com/2011/07/27/pop-0.0.7</link><pubDate>Wed, 27 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/27/pop-0.0.7</guid><description>&lt;p&gt;Pop 0.0.7 is out:&lt;/p&gt;
+&lt;li&gt;Atom feed helper takes less options (the variables are all in &lt;code&gt;config&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Atom feed uses &lt;code&gt;config.perPage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Post file names with extra dots will be parsed correctly&lt;/li&gt;
+&lt;li&gt;YAML front-matter will be extracted less greedily&lt;/li&gt;
+&lt;li&gt;YAML front-matter can now contain a &lt;code&gt;summary&lt;/code&gt; property to make it easier to display post summaries in lists&lt;/li&gt;
+&lt;li&gt;Trailing slashes will be removed from &lt;code&gt;config.url&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.4</title>
+      <link>http://popjs.com/2011/07/24/pop-0.0.4
+      </link>
+      <pubDate>Sun, 24 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/24/pop-0.0.4
+      </guid>
+      <description>&lt;p&gt;Pop 0.0.4 is out:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Added generators&lt;/li&gt;
-&lt;li&gt;Plugins can add their own generators through &lt;code&gt;myPlugin.generators&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;SiteBuilder&lt;/code&gt; should trigger the server properly&lt;/li&gt;
+&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; will generate a site in the current directory and exit&lt;/li&gt;
+&lt;li&gt;Running &lt;code&gt;pop&lt;/code&gt; on a path that doesn't look like a Pop site will print an error rather than a confusing stack trace&lt;/li&gt;
+&lt;li&gt;Pop server mode will watch all subdirectories for changes, so things like stylesheets (including Stylus files) will automatically regenerate the changed file&lt;/li&gt;
+&lt;/ul&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop 0.0.2</title>
+      <link>http://popjs.com/2011/07/22/pop-0.0.2
+      </link>
+      <pubDate>Fri, 22 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/22/pop-0.0.2
+      </guid>
+      <description>&lt;p&gt;Pop version 0.0.2 has been released.  This version adds additional default styles to the site generator (blockquotes, pagination), and adds post summary support.&lt;/p&gt;
+
+&lt;p&gt;Writing YAML front-matter like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;      ---
+      layout: post
+      title: Amazing Facts About Lions
+      summary: Above all, lions are amazing creatures.
+      author: Dave Grohl
+      tags:   
+      - releases
+      ---
+
+      Post content here.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will make &lt;code&gt;post.summary&lt;/code&gt; available to templates.  It gets processed with markdown or textile, depending on the format of the post, and also applies helpers.  I've added this to the &lt;code&gt;hNews()&lt;/code&gt; helper when used to generate summaries.&lt;/p&gt;
+      </description>
+    </item>
+    <item>
+      <title>Pop Released</title>
+      <link>http://popjs.com/2011/07/21/example-post-about-something
+      </link>
+      <pubDate>Thu, 21 Jul 2011 01:07:00 GMT
+      </pubDate>
+      <guid>http://popjs.com/2011/07/21/example-post-about-something
+      </guid>
+      <description>&lt;p&gt;Pop version 0.0.1 has been released:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;GitHub: &lt;a href="https://github.com/alexyoung/pop"&gt;alexyoung / pop&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2&gt;Using Generators&lt;/h2&gt;
+&lt;p&gt;This includes &lt;a href="https://github.com/alexyoung/stextile"&gt;stextile&lt;/a&gt;, which is a rough-and-ready &lt;a href="http://www.textism.com/tools/textile/"&gt;Textile&lt;/a&gt; parser.  Pop also supports &lt;a href="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Generating a site with Pop generally works like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pop new new_site
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Generators can now be used to generate different kinds of sites:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;pop new pop-gallery new_site
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This example requires &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2&gt;Writing Generators&lt;/h2&gt;
-
-&lt;p&gt;Basic usage is to make a CommonJS module with a &lt;code&gt;generator&lt;/code&gt; property:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;module.exports = {
-  generator: {
-    run: function(helpers, pathName) {
-    }
-  }
-};
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The parameters will be passed by Pop.  The &lt;code&gt;helpers&lt;/code&gt; value contains the internal cli_tools.js module, and &lt;code&gt;pathName&lt;/code&gt; is the destination path for the site.&lt;/p&gt;
-
-&lt;p&gt;A full example is available here: &lt;a href="https://github.com/alexyoung/pop-gallery"&gt;pop-gallery&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Pop 0.0.8</title><link>http://popjs.com/2011/07/28/pop-0.0.8</link><pubDate>Thu, 28 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/28/pop-0.0.8</guid><description>&lt;p&gt;I've just released Pop 0.0.8, which adds:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;An option to &lt;code&gt;_config.json&lt;/code&gt; for the port the local server uses&lt;/li&gt;
-&lt;li&gt;RSS feed helper&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;RSS Feeds&lt;/h2&gt;
-
-&lt;p&gt;You can get RSS feeds "for free" by adding an &lt;code&gt;autoGenerate&lt;/code&gt; option to &lt;code&gt;_config.json&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;"autoGenerate": [{"feed": "feed.xml"}, {"rss": "feed.rss"}]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The helper itself is fairly easy to use:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;/**
- * RSS Jade template.
- *
- * @param {String} Feed URL
- * @param {Integer} Number of paragraphs to summarise
- * @param {String} Optional description
- *
- * @return {String}
- */
-rss: function(feed, summarise, description) {
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I've checked a few example feeds with the &lt;a href="http://validator.w3.org/feed/"&gt;W3C validation service&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Pop 0.0.9</title><link>http://popjs.com/2011/07/29/pop-0.0.9</link><pubDate>Fri, 29 Jul 2011 01:07:00 GMT</pubDate><guid>http://popjs.com/2011/07/29/pop-0.0.9</guid><description>&lt;p&gt;Pop 0.0.9 is out:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Added centralised logging (mainly so I can turn off logs in tests)&lt;/li&gt;
-&lt;li&gt;Defaults post author to &lt;code&gt;LOGNAME&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Escapes post file names&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Pop 0.1.0</title><link>http://popjs.com/2011/08/02/pop-0.1.0</link><pubDate>Tue, 02 Aug 2011 01:08:00 GMT</pubDate><guid>http://popjs.com/2011/08/02/pop-0.1.0</guid><description>&lt;p&gt;I've released Pop 0.1.0.  This cements the basic functionality that I want to include in Pop for the near future.&lt;/p&gt;
-
-&lt;p&gt;This release includes a tags page for the built-in site generator, and a helper called &lt;code&gt;postsForTag&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Pop 0.1.1</title><link>http://popjs.com/2011/08/18/pop-0.1.1</link><pubDate>Thu, 18 Aug 2011 01:08:00 GMT</pubDate><guid>http://popjs.com/2011/08/18/pop-0.1.1</guid><description>&lt;p&gt;Pop 0.1.1 has been released.  This version improves the build process by making it use more events rather than counting down the number of files that have been processed.&lt;/p&gt;
-
-&lt;p&gt;This should make the site build process more stable.&lt;/p&gt;</description></item><item><title>Google Analytics Plugin</title><link>http://popjs.com/2011/08/23/pop-ga</link><pubDate>Tue, 23 Aug 2011 01:08:00 GMT</pubDate><guid>http://popjs.com/2011/08/23/pop-ga</guid><description>&lt;p&gt;&lt;a href="https://github.com/shapeshed/pop-ga"&gt;pop-ga&lt;/a&gt; by &lt;a href="http://shapeshed.com/"&gt;George Ornbo&lt;/a&gt; is a Google Analytics plugin for pop.  It can be installed using npm:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;npm install -g pop-ga
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And then used by updating your &lt;code&gt;_config.json&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;, "require": ["pop-ga"]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, call the plugin's helper with your Google Analytics ID:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;!{ga('UA-345678-90')}
-&lt;/code&gt;&lt;/pre&gt;</description></item></channel></rss>
+&lt;p&gt;Pop sites use &lt;a href="http://jade-lang.com/"&gt;Jade&lt;/a&gt; and &lt;a href="http://learnboost.github.com/stylus/"&gt;Stylus&lt;/a&gt;.  These are CSS selector-based shorthands for quickly writing HTML and CSS.&lt;/p&gt;
+      </description>
+    </item>
+  </channel>
+</rss>
