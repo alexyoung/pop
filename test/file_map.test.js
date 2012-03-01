@@ -11,17 +11,13 @@ config = {
 , root: path.join(__dirname, 'fixtures', 'test_site')
 };
 
-fileMap = new FileMap(config);
-fileMap.walk();
+exports['test FileMap finds files'] = function(done) {
+  fileMap = new FileMap(config);
+  fileMap.walk();
 
-exports['test FileMap finds files'] = function(beforeExit) {
   fileMap.on('ready', function() {
-    assert.ok(true);
-  });
-
-  beforeExit(function() {
-    // Make sure the correct amount of files have been found
     assert.equal(fileMap.files.length, 15);
+    done();
   });
 };
 

@@ -28,7 +28,7 @@ exports['test getPostFileName'] = function() {
   assert.equal('_posts/2011-11-01-awesome-p%C3%A9st.md', cliTools.getPostFileName('/:year/:month/:day/:title', date, 'Awesome Pést', 'md'));
 };
 
-exports['test makePost'] = function(beforeExit) {
+exports['test makePost'] = function() {
   var date = new Date()
     , title = 'Awesome Post'
     , fileName = path.join(config.root, cliTools.getPostFileName('/:year/:month/:day/:title', date, title, 'md'));
@@ -41,7 +41,7 @@ exports['test makePost'] = function(beforeExit) {
   });
 };
 
-exports['test makeSite'] = function(beforeExit) {
+exports['test makeSite'] = function() {
   var fileName = config.root + 'make-site-' + (new Date).getTime().toString();
 
   cliTools.makeSite(fileName, function() {
@@ -53,7 +53,7 @@ exports['test makeSite'] = function(beforeExit) {
   });
 };
 
-exports['test renderFile'] = function(beforeExit) {
+exports['test renderFile'] = function() {
   var c = {
     root: __dirname + '/fixtures/test_site/'
   };

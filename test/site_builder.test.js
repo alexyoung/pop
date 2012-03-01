@@ -16,12 +16,12 @@ config = {
 , title: 'My Site'
 };
 
-exports['test SiteBuilder generates a simple site correctly'] = function(beforeExit) {
+exports['test SiteBuilder generates a simple site correctly'] = function(done) {
   var siteBuilder = pop.generateSite(config, false);
-
-  beforeExit(function() {
+  siteBuilder.on('ready', function() {
     var html = fs.readFileSync(config.output + '/index.html', 'utf8');
-    assert.match(html, /Welcome to my site/);
+    assert.ok(html.match(/Welcome to my site/));
+    done();
   });
 };
 
@@ -32,7 +32,7 @@ exports['test isRenderedFile'] = function() {
   assert.ok(!siteBuilder.isRenderedFile({ type: 'file' }));
 };
 
-exports['test SiteBuilder generates a simple site correctly with a dot in the path'] = function(beforeExit) {
+exports['test SiteBuilder generates a simple site correctly with a dot in the path'] = function(done) {
   var configClone, siteBuilder;
  
   configClone = {
@@ -48,9 +48,10 @@ exports['test SiteBuilder generates a simple site correctly with a dot in the pa
  
   siteBuilder = pop.generateSite(configClone, false);
 
-  beforeExit(function() {
+  siteBuilder.on('ready', function() {
     var html = fs.readFileSync(configClone.output + '/index.html', 'utf8');
-    assert.match(html, /Welcome to my site/);
+    assert.ok(html.match(/Welcome to my site/));
+    done();
   });
 };
 

@@ -7,6 +7,10 @@ var assert = require('assert')
   , pop = require(__dirname + '/../lib/pop')
   , config;
 
+assert.match = function(string, regex) {
+  assert.ok(string.match(regex), string + ' does not match ' + regex);
+};
+
 config = {
   permalink: '/:year/:month/:day/:title'
 , url: 'http://example.com'
@@ -39,8 +43,8 @@ exports['test pagination template generation'] = function() {
 
   paginator = new Paginator(config.perPage, siteBuilder.posts);
   html = helpers.paginate.apply(siteBuilder, [paginator]);
-
-  expected = '<div class="pages"><span class="prev_next"><strong class="page">1</strong><a href="/page2/" class="page">2</a><a href="/page3/" class="page">3</a><a href="/page4/" class="page">4</a><a href="/page5/" class="page">5</a><a href="/page2/" class="next">Next</a><span>&rarr;</span></span></div>';
+  
+  expected = '\n<div class="pages"><span class="prev_next"><strong class="page">1</strong><a href="/page2/" class="page">2</a><a href="/page3/" class="page">3</a><a href="/page4/" class="page">4</a><a href="/page5/" class="page">5</a><a href="/page2/" class="next">Next</a><span>&rarr;</span></span>\n</div>';
 
   assert.equal(html, expected);
 };
@@ -49,20 +53,20 @@ exports['test atom feed generation'] = function() {
   var paginator = new Paginator(config.perPage, siteBuilder.posts)
     , xml = helpers.atom.apply(siteBuilder, [config.url]);
 
-  assert.match(xml, /<content type="html">Example document content<\/content>/);
+  assert.match(xml, /<content type="html">Example document content/);
 };
 
 exports['test truncated atom feed generation'] = function() {
   var paginator = new Paginator(config.perPage, siteBuilder.posts)
     , xml = helpers.atom.apply(siteBuilder, [config.url, true]);
-  assert.match(xml, /<content type="html">Example document content<\/content>/);
+  assert.match(xml, /<content type="html">Example document content/);
 };
 
 exports['test RSS feed generation'] = function() {
   var paginator = new Paginator(config.perPage, siteBuilder.posts)
     , xml = helpers.rss.apply(siteBuilder, [config.url]);
 
-  assert.match(xml, /<description>Example document content<\/description>/);
+  assert.match(xml, /<description>Example document content/);
 };
 
 exports['test allTags'] = function() {
