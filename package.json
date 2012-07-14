@@ -1,6 +1,6 @@
 { "name": "pop"
 , "description": "A static website and blog generator"
-, "version": "0.1.7"
+, "version": "0.1.8"
 , "url": "http://popjs.com"
 , "author": "Alex R. Young <alex@helicoid.net>"
 , "engines": ["node >= 0.4.7"]

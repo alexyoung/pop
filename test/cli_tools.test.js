@@ -3,6 +3,7 @@ var assert = require('assert')
   , log = require(__dirname + '/../lib/log')
   , fs = require(__dirname + '/../lib/graceful')
   , pop = require(__dirname + '/../lib/pop')
+  , existsSync = require(__dirname + '/../lib/utils').existsSync
   , cliTools = pop.cliTools
   , config;
 
@@ -14,7 +15,7 @@ config = {
 , root: '/tmp/pop-tests/'
 };
 
-if (!path.existsSync(config.root))
+if (!existsSync(config.root))
   fs.mkdirSync(config.root, 0777);
 
 exports['test datePad'] = function() {
@@ -35,7 +36,7 @@ exports['test makePost'] = function() {
 
   fs.mkdir_p(path.join(config.root, '_posts'), 0777, function() { 
     cliTools.makePost(config, title, function() {
-      assert.ok(path.existsSync(fileName));
+      assert.ok(existsSync(fileName));
       fs.unlinkSync(fileName);
     });
   });
@@ -45,11 +46,11 @@ exports['test makeSite'] = function() {
   var fileName = config.root + 'make-site-' + (new Date).getTime().toString();
 
   cliTools.makeSite(fileName, function() {
-    assert.ok(path.existsSync(fileName));
-    assert.ok(path.existsSync(fileName + '/_config.json'));
-    assert.ok(path.existsSync(fileName + '/index.jade'));
-    assert.ok(path.existsSync(fileName + '/robots.txt'));
-    assert.ok(path.existsSync(fileName + '/_layouts/default.jade'));
+    assert.ok(existsSync(fileName));
+    assert.ok(existsSync(fileName + '/_config.json'));
+    assert.ok(existsSync(fileName + '/index.jade'));
+    assert.ok(existsSync(fileName + '/robots.txt'));
+    assert.ok(existsSync(fileName + '/_layouts/default.jade'));
   });
 };
 
