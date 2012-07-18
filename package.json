@@ -24,6 +24,6 @@
   , "url" : "http://github.com/alexyoung/pop.git"
   }
 , "scripts": {
-    "test": "./node_modules/.bin/mocha -u exports test/*.js"
+    "test": "mocha -u exports test"
   }
 }
