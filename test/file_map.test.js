@@ -21,3 +21,21 @@ exports['test FileMap finds files'] = function(done) {
   });
 };
 
+var filterFilesByType = function(type, cb) {
+  fileMap = new FileMap(config);
+  fileMap.walk();
+  fileMap.on('ready', function() {
+    var files = fileMap.files.filter(function(file) {
+      return file.type.indexOf('post') !== -1;
+    });
+    cb(files);
+  });
+}
+
+exports['test FileMap finds posts'] = function(done) {
+  filterFilesByType('post', function(files) {
+    assert.equal(files.length, 2);
+    done();
+  });
+}
+
