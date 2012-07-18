@@ -13,7 +13,7 @@
   , "stextile": "latest"
   , "nodewatch": "latest"
   , "jade": "0.20.3"
-  , "stylus": "0.24.0"
+  , "stylus": "0.28.2"
   }
 , "devDependencies": {
     "dox": "latest"
