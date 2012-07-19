@@ -1,5 +1,6 @@
 var assert = require('assert')
   , path = require('path')
+  , os = require('os')
   , log = require(__dirname + '/../lib/log')
   , fs = require(__dirname + '/../lib/graceful')
   , pop = require(__dirname + '/../lib/pop')
@@ -12,7 +13,7 @@ log.enabled = false;
 
 config = {
   permalink: '/:year/:month/:day/:title'
-, root: '/tmp/pop-tests/'
+, root: path.join(os.tmpDir(), '/pop-tests')
 };
 
 if (!existsSync(config.root))

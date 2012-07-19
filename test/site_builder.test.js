@@ -41,7 +41,7 @@ exports['test SiteBuilder generates a simple site correctly with a dot in the pa
   , paginate: 20
   , exclude: ['run\.js', '\.swp']
   , root: path.join(__dirname, 'fixtures', 'test.site')
-  , output: path.join('/tmp', 'pop-tests', (new Date).getTime().toString() + '-test.site')
+  , output: path.join(os.tmpDir(), 'pop-tests', (new Date).getTime().toString() + '-test.site')
   , autoGenerate: [{'feed': 'feed.xml'}] // Should be ignored with 0 posts
   , url: 'http://example.com/'
   , title: 'My Site'
