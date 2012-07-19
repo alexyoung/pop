@@ -13,7 +13,7 @@
   , "stextile": "latest"
   , "nodewatch": "latest"
   , "jade": "0.20.3"
-  , "stylus": "0.24.0"
+  , "stylus": "0.28.2"
   }
 , "devDependencies": {
     "dox": "latest"
@@ -24,6 +24,6 @@
   , "url" : "http://github.com/alexyoung/pop.git"
   }
 , "scripts": {
-    "test": "./node_modules/.bin/mocha -u exports test/*.js"
+    "test": "mocha -u exports test"
   }
 }
