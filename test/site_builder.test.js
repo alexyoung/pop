@@ -1,6 +1,7 @@
 var assert = require('assert')
   , path = require('path')
   , fs = require('fs')
+  , os = require('os')
   , pop = require(__dirname + '/../lib/pop')
   , SiteBuilder = require(__dirname + '/../lib/site_builder')
   , config;
@@ -10,7 +11,7 @@ config = {
 , paginate: 20
 , exclude: ['run\.js', '\.swp']
 , root: path.join(__dirname, 'fixtures', 'test_site')
-, output: path.join('/tmp', 'pop-tests', (new Date).getTime().toString() + '-site-builder')
+, output: path.join(os.tmpDir(), 'pop-tests', (new Date).getTime().toString() + '-site-builder')
 , autoGenerate: [{'feed': 'feed.xml'}] // Should be ignored with 0 posts
 , url: 'http://example.com/'
 , title: 'My Site'
