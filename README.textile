@@ -41,6 +41,7 @@ Must be valid JSON.
 h3. Contributions
 
 * George Ornbo
+* Windows support by Brian Carlson (brianc)
 
 h3. Plugins
 
