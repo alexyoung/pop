@@ -1,3 +1,5 @@
+Note this project is now unsupported, and I've given the 'pop' npm name to someone else to use for a more active project.
+
 h3. Features
 
 Pop is a static site builder for Node, optimised for blogs; based on "Jekyll":https://github.com/mojombo/jekyll.
@@ -6,14 +8,6 @@ Pop is a static site builder for Node, optimised for blogs; based on "Jekyll":ht
 * Useful built-in helpers: hNews post generation, pagination, tags
 * Extend using your own helpers and pre-filters
 * Plugins
-
-h3. Installation
-
-<pre>
-npm install -g pop
-</pre>
-
-Global is preferred.  If you want to use <code>pop server</code>, you'll need to install Express too.
 
 h3. Documentation
 
